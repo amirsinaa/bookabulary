@@ -179,6 +179,6 @@ export interface parameters {
   "rowFilter.profiles.website": string;
 }
 
-export interface operations {}
+export interface operations { }
 
-export interface external {}
+export interface external { }
