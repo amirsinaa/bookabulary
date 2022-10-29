@@ -1,18 +1,18 @@
+import { useSessionContext } from '@supabase/auth-helpers-react'
 import { SigninForm } from '@/components/user/auth-form';
-import { useSession } from '@/hooks/use-session';
 import { useEffect } from 'react';
 import Router from 'next/router';
 
-export default function SigninPage() {
-  const session = useSession()
+export default function Auth() {
+  const { session } = useSessionContext()
 
   useEffect(() => {
     if (session) {
-      Router.push('/')
+      Router.push('/user/profile')
     }
   })
 
-  if (session) return null
-
-  return <SigninForm />
+  return (
+    !session && <SigninForm />
+  )
 }
