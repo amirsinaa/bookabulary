@@ -1,15 +1,21 @@
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { Layout } from '@/components/skeleton/layout';
-import { useSession } from '@/hooks/use-session';
 import { AppProps } from 'next/app';
+import { useState } from 'react'
 import '@/styles/globals.css';
 
 function Bookabulary({ Component, pageProps }: AppProps) {
-  const session = useSession();
-
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient())
   return (
-    <Layout session={session}>
-      <Component {...pageProps} />
-    </Layout>
+
+    <SessionContextProvider
+      supabaseClient={supabaseClient}
+    >
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </SessionContextProvider>
   )
 }
 
