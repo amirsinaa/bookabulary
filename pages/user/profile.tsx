@@ -1,10 +1,22 @@
 import { ProfileForm } from '@/components/user/profile-form';
-import { useSession } from '@/hooks/use-session';
+import { withPageAuth } from '@supabase/auth-helpers-nextjs'
 
-export default function ProfilePage() {
-  const session = useSession()
+export default function ProtectedPage({ session }) {
 
-  if (!session) return null
-
-  return <ProfileForm session={session} />
+  return (
+    <>
+      <ProfileForm session={session} />
+    </>
+  )
 }
+
+export const getServerSideProps = withPageAuth({
+  redirectTo: '/user/auth',
+  async getServerSideProps(ctx, supabase) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    return { props: { session } }
+  },
+})
