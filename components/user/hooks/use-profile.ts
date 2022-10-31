@@ -1,13 +1,9 @@
-import { AuthSession } from '@supabase/supabase-js'
+import type { Profile } from '@/components/user/types/profile';
+import type { definitions } from '@/types/supabase-open-api'
+import type { AuthSession } from '@supabase/supabase-js'
+import { supabase } from '@/api/supabase-client'
 import { useEffect, useState } from 'react'
-import { definitions } from '../types/supabase'
-import { supabase } from '../api/supabase-client'
 
-export interface Profile {
-  username: string
-  website: string
-  avatarUrl: string
-}
 
 export function useProfile(session: AuthSession) {
   const [loading, setLoading] = useState(false)
@@ -18,13 +14,13 @@ export function useProfile(session: AuthSession) {
     (async function () {
       try {
         setLoading(true)
-        const user = supabase.auth.user()!
 
         const { data, error, status } = await supabase
-          .from<definitions['profiles']>('profiles')
+          .from<definitions["profiles"]>('profiles')
           .select(`username, website, avatar_url`)
-          .eq('id', user.id)
+          .eq('id', session.user.id)
           .single()
+
 
         if (error && status !== 406) {
           throw error
@@ -32,9 +28,9 @@ export function useProfile(session: AuthSession) {
 
         if (data) {
           setProfile({
-            username: data.username ?? '',
-            website: data.website ?? '',
-            avatarUrl: data.avatar_url ?? '',
+            username: data.username,
+            avatarUrl: data.avatar_url,
+            website: data.website
           })
         }
       } catch (error: any) {
