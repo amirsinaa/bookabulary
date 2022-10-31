@@ -1,60 +1,87 @@
-import { AuthSession } from '@supabase/supabase-js';
-import { useProfile } from '@/hooks/use-profile';
-import { supabase } from '@/api/supabase-client';
-import { useState, useEffect } from 'react';
+import type {
+  ProfileForm,
+  ProfileState,
+  ProfileAction,
+  ProfileReducerFunc
+} from '@/components/user/types/profile';
+import { useProfile } from '@/components/user/hooks/use-profile';
+import { supabase } from '@/api/supabase-client'
+import { useReducer, useEffect } from 'react';
 import { EditAvatar } from './edit-avatar';
 
-export interface Props {
-  session: AuthSession
+function profileReducer(state: ProfileState, action: ProfileAction): ProfileState {
+  const { type, payload } = action
+  switch (type) {
+    case 'SET_UPDATE_STATUS':
+      return { ...state, isUpdating: payload.isUpdating }
+    case 'SET_USERNAME':
+      return { ...state, username: payload.username }
+    case 'SET_WEBSITE':
+      return { ...state, website: payload.website }
+    case 'SET_AVATAR':
+      return { ...state, avatarUrl: payload.avatarUrl }
+    case 'SET_ERROR':
+      return { ...state, error: payload.error }
+    default:
+      throw Error('Unkown action');
+  }
 }
 
-export function ProfileForm({ session }: Props) {
-  const [updating, setUpdating] = useState(false)
-  const [username, setUsername] = useState<string>('')
-  const [website, setWebsite] = useState<string>('')
-  const [avatar_url, setAvatarUrl] = useState<string>('')
-  const { loading, error, profile } = useProfile(session)
+export function ProfileForm({ session }) {
+  const [profileState, profileDispatch] = useReducer<ProfileReducerFunc>(profileReducer, {
+    username: '',
+    website: '',
+    avatarUrl: '',
+    isUpdating: false,
+    error: null
+  });
+
+  const { loading, error: profileError, profile } = useProfile(session)
+  const { isUpdating, username, website, avatarUrl, error } = profileState;
 
   useEffect(() => {
     if (profile) {
-      setUsername(profile.username)
-      setWebsite(profile.website)
-      setAvatarUrl(profile.avatarUrl)
+      if (profileError) {
+        profileDispatch({ type: 'SET_ERROR', payload: { error: profileError.message } })
+      }
+      profileDispatch({ type: 'SET_USERNAME', payload: { username: profile.username } })
+      profileDispatch({ type: 'SET_WEBSITE', payload: { website: profile.website } })
+      profileDispatch({ type: 'SET_AVATAR', payload: { avatarUrl: profile.avatarUrl } })
     }
   }, [profile])
 
   async function updateProfile({
+    e,
     username,
     website,
-    avatar_url,
-  }: {
-    username: string
-    website: string
-    avatar_url: string
-  }) {
+    avatarUrl: avatar_url,
+  }: ProfileForm) {
     try {
-      setUpdating(true)
-      const user = supabase.auth.user()!
+      profileDispatch({
+        type: 'SET_UPDATE_STATUS',
+        payload: { isUpdating: true }
+      })
+
+      e.preventDefault()
 
       const updates = {
-        id: user.id,
         username,
         website,
         avatar_url,
-        updated_at: new Date(),
+        id: session.user.id
       }
 
-      const { error } = await supabase.from('profiles').upsert(updates, {
-        returning: 'minimal', // Don't return the value after inserting
-      })
+      const { error } = await supabase.from('profiles').update(updates).eq('id', session.user.id).select("*")
 
       if (error) {
         throw error
       }
-    } catch (error: any) {
-      alert(error.message)
-    } finally {
-      setUpdating(false)
+    } catch (error) {
+      profileDispatch({ type: 'SET_ERROR', payload: { error: error.message } })
+
+    }
+    finally {
+      profileDispatch({ type: 'SET_UPDATE_STATUS', payload: { isUpdating: false } })
     }
   }
 
@@ -63,61 +90,60 @@ export function ProfileForm({ session }: Props) {
   }
 
   if (error) {
-    return <p>An error occured when fetching your profile information.</p>
+    return <p>
+      {error.message}
+    </p>
   }
 
   return (
-    <form className="flex flex-col space-y-4">
-      <div className="form-group">
-        <EditAvatar url={avatar_url} onUpload={(url) => setAvatarUrl(url)} />
-      </div>
-      <div className="form-group">
-        <label className="label" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="field"
-          id="email"
-          type="text"
-          value={session.user!.email}
-          disabled
-        />
-      </div>
-      <div className="form-group">
-        <label className="label" htmlFor="username">
-          Name
-        </label>
-        <input
-          className="field"
-          disabled={updating}
-          id="username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div className="form-group">
-        <label className="label" htmlFor="website">
-          Website
-        </label>
-        <input
-          className="field"
-          disabled={updating}
-          id="website"
-          type="website"
-          value={website}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-      </div>
-      <div>
-        <button
-          className="btn"
-          onClick={() => updateProfile({ username, website, avatar_url })}
-          disabled={updating}
-        >
-          {updating ? 'Updating…' : 'Update'}
-        </button>
-      </div>
-    </form>
+    <>
+      <form className={`flex flex-col space-y-4 ${isUpdating ? 'opacity-0' : ''}`}>
+        <div className="form-group">
+          <EditAvatar url={avatarUrl} onUpload={(url) => profileDispatch({
+            type: 'SET_AVATAR', payload: { avatarUrl: url }
+          })
+          } />
+        </div>
+        <div className="form-group">
+          <label className="label" htmlFor="username">
+            Name
+          </label>
+          <input
+            className="field"
+            disabled={isUpdating}
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => profileDispatch({
+              type: 'SET_USERNAME', payload: { username: e.target.value }
+            })}
+          />
+        </div>
+        <div className="form-group">
+          <label className="label" htmlFor="website">
+            Website
+          </label>
+          <input
+            className="field"
+            disabled={isUpdating}
+            id="website"
+            type="website"
+            value={website}
+            onChange={(e) => profileDispatch({
+              type: 'SET_WEBSITE', payload: { website: e.target.value }
+            })}
+          />
+        </div>
+        <div>
+          <button
+            className="btn"
+            onClick={(e) => updateProfile({ e, username, website, avatarUrl })}
+            disabled={isUpdating}
+          >
+            Update
+          </button>
+        </div>
+      </form>
+    </>
   )
 }
