@@ -1,5 +1,5 @@
 import { ChangeEventHandler, useEffect, useState } from 'react'
-import { supabase } from '@/api/supabase-client';
+import { useSessionContext } from '@supabase/auth-helpers-react'
 
 export interface Props {
   url: string
@@ -7,6 +7,7 @@ export interface Props {
 }
 
 export function EditAvatar({ url, onUpload }: Props) {
+  const { supabaseClient } = useSessionContext();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
 
@@ -16,7 +17,7 @@ export function EditAvatar({ url, onUpload }: Props) {
 
   async function downloadImage(path: string) {
     try {
-      const { data, error } = await supabase.storage
+      const { data, error } = await supabaseClient.storage
         .from('avatars')
         .download(path)
       if (error) {
@@ -42,7 +43,7 @@ export function EditAvatar({ url, onUpload }: Props) {
       const fileName = `${Math.random()}.${fileExt}`
       const filePath = `${fileName}`
 
-      let { error: uploadError } = await supabase.storage
+      let { error: uploadError } = await supabaseClient.storage
         .from('avatars')
         .upload(filePath, file)
 

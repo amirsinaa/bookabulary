@@ -1,7 +1,8 @@
-import { supabase } from '@/api/supabase-client';
+import { useSessionContext } from '@supabase/auth-helpers-react'
 import { useState } from 'react';
 
 export function SigninForm() {
+  const { supabaseClient } = useSessionContext()
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [emailSent, setEmailSent] = useState(false)
@@ -9,7 +10,7 @@ export function SigninForm() {
   const handleLogin = async (email: string) => {
     try {
       setLoading(true)
-      const { error } = await supabase.auth.signIn({ email })
+      const { error } = await supabaseClient.auth.signInWithOtp({ email: email })
       if (error) throw error
       setEmailSent(true)
     } catch (error: any) {

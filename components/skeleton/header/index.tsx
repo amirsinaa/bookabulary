@@ -1,12 +1,7 @@
-import { AuthSession } from '@supabase/supabase-js'
 import Navigation from './navigation';
 import Link from 'next/link'
 
-export interface Props {
-  session: AuthSession | null
-}
-
-export default function Header({ session }: Props) {
+export default function Header() {
   return (
     <header className="flex justify-between p-4 bg-white border-b">
       <h1>
@@ -16,7 +11,7 @@ export default function Header({ session }: Props) {
           </a>
         </Link>
       </h1>
-      <Navigation session={session} />
+      <Navigation />
     </header>
   )
 }

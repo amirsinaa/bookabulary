@@ -1,13 +1,10 @@
-import { AuthSession } from '@supabase/supabase-js'
-import Link from 'next/link'
+import { useSessionContext } from '@supabase/auth-helpers-react'
 import Router from 'next/router'
-import { supabase } from '../../../api/supabase-client'
+import Link from 'next/link'
 
-export interface Props {
-  session: AuthSession | null
-}
+export default function Navigation() {
+  const { session, supabaseClient } = useSessionContext()
 
-export default function Navigation({ session }: Props) {
   return (
     <ul className="flex space-x-4">
       {session ? (
@@ -21,7 +18,7 @@ export default function Navigation({ session }: Props) {
             <button
               className="btn-link"
               onClick={() => {
-                supabase.auth.signOut()
+                supabaseClient.auth.signOut()
                 Router.push('/')
               }}
             >
