@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  @apply bg-green-700 hover:bg-green-600 rounded-md px-4 py-2 text-white cursor-pointer;
+}
+
+.btn-link {
+  @apply text-green-700 hover:text-green-600 cursor-pointer;
+}
+
+.label {
+  @apply text-sm;
+}
+
+.field {
+  @apply border p-2 rounded outline-0 focus:ring-4 ring-green-100 focus:border-green-600;
+}
+
+.form-group {
+  @apply flex flex-col space-y-1;
+}
+
+.prose p {
+  @apply mb-2;
+}
