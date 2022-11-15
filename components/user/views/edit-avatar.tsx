@@ -7,9 +7,9 @@ export interface Props {
 }
 
 export function EditAvatar({ url, onUpload }: Props) {
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const { supabaseClient } = useSessionContext();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (url) downloadImage(url)

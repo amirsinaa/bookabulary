@@ -1,5 +1,5 @@
 import { useSessionContext } from '@supabase/auth-helpers-react'
-import { SigninForm } from '@/components/user/auth-form';
+import { SigninForm } from '@/components/user/views/auth-form';
 import { useEffect } from 'react';
 import Router from 'next/router';
 

@@ -1,10 +1,9 @@
 import type { ProfileForm } from '@/components/user/types/profile';
 import { useProfile } from '@/components/user/hooks/use-profile';
+import { EditAvatar } from '@/components/user/views/edit-avatar';
 import { useState, useEffect } from 'react';
-import { EditAvatar } from './edit-avatar';
 
 export function ProfileForm({ user }) {
-
   const [{ profile }, { update }] = useProfile(user);
   const { loading, error, data } = profile;
 

@@ -1,13 +1,5 @@
-import { ProfileForm } from '@/components/user/profile-form';
+import { ProfileForm } from '@/components/user/views/profile-form';
 import { withPageAuth } from '@supabase/auth-helpers-nextjs'
-
-export default function Profile({ user }) {
-  return (
-    <>
-      <ProfileForm user={user} />
-    </>
-  )
-}
 
 export const getServerSideProps = withPageAuth({
   redirectTo: '/user/auth',
@@ -16,3 +8,11 @@ export const getServerSideProps = withPageAuth({
     return { props: { user } }
   },
 })
+
+export default function Profile({ user }) {
+  return (
+    <>
+      <ProfileForm user={user} />
+    </>
+  )
+}

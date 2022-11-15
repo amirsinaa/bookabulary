@@ -1,5 +1,9 @@
 
-import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClientProvider,
+  QueryClient,
+  Hydrate,
+} from '@tanstack/react-query';
 import { PageProps, ExtendedAppProps } from '@/types/next';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
