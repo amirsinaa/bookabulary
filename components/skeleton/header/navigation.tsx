@@ -43,6 +43,11 @@ export default function Navigation() {
           <a className="btn-link">About</a>
         </Link>
       </li>
+      <li>
+        <Link href="/books">
+          <a className="btn-link">Books</a>
+        </Link>
+      </li>
     </ul>
   )
 }
