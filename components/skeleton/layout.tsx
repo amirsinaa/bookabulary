@@ -9,11 +9,9 @@ export function Layout({ children }: PropsWithChildren) {
       <Head>
         <title>Bookabulary</title>
       </Head>
-      <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
-        <main className="max-w-screen-xl p-2 m-auto">{children}</main>
-        <Footer />
-      </div>
+      <Header />
+      <main className="max-w-screen-xl p-2 m-auto">{children}</main>
+      <Footer />
     </>
   )
 }
