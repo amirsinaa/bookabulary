@@ -1,6 +1,7 @@
 import type { ProfileForm } from '@/components/user/types/profile';
 import { useProfile } from '@/components/user/hooks/use-profile';
 import { EditAvatar } from '@/components/user/views/edit-avatar';
+import { Input } from "@/components/common/input";
 import { useState, useEffect } from 'react';
 
 export function ProfileForm({ user }) {
@@ -33,10 +34,10 @@ export function ProfileForm({ user }) {
           <label className="label" htmlFor="username">
             Name
           </label>
-          <input
-            className="field"
+          <Input
             disabled={loading}
             id="username"
+            name="username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -46,10 +47,10 @@ export function ProfileForm({ user }) {
           <label className="label" htmlFor="website">
             Website
           </label>
-          <input
-            className="field"
+          <Input
             disabled={loading}
             id="website"
+            name="website"
             type="website"
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
@@ -57,7 +58,7 @@ export function ProfileForm({ user }) {
         </div>
         <div>
           <button
-            className="btn"
+            className="w-full btn"
             onClick={(e) => update(e, { username, website, avatarUrl })}
             disabled={loading}
           >
