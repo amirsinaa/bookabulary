@@ -10,9 +10,5 @@ export const getServerSideProps = withPageAuth({
 })
 
 export default function Profile({ user }) {
-  return (
-    <>
-      <ProfileForm user={user} />
-    </>
-  )
+  return <ProfileForm user={user} />
 }
