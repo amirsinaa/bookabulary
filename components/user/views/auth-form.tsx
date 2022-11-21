@@ -1,4 +1,5 @@
-import { useSessionContext } from '@supabase/auth-helpers-react'
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { Input } from "@/components/common/input";
 import { useState } from 'react';
 
 export function SigninForm() {
@@ -49,9 +50,8 @@ export function SigninForm() {
               E-mail address
             </label>
 
-            <input
+            <Input
               id="email"
-              className="field "
               type="email"
               placeholder="Your email"
               value={email}
