@@ -11,7 +11,6 @@ export const BookFinder = () => {
   const [bookName, setBookName] = useState("");
 
   const { isLoading, data: books } = useQuery(["book-finder-result", bookName], () => GET_BOOKS_LIST(bookName));
-  console.log(isLoading);
   return (
     <section className="flex flex-col flex-wrap justify-center">
       <h3 className="py-10 text-4xl font-bold text-center text-teal-800">Find a book you're reading</h3>
