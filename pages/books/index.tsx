@@ -1,11 +1,12 @@
-import { QueryClient, useQuery, dehydrate } from '@tanstack/react-query';
-import { GET_BOOKS_LIST } from '@/components/book/api/GET_BOOKS_LIST';
-import { BooksList } from '@/components/book/views/book-list';
+import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { GET_LATEST_BOOKS } from "@/components/book/api/GET_LATEST_BOOKS";
+import { RecentBooks } from "@/components/book/views/book-recent-view";
+import { BookFinder } from "@/components/book/views/book-finder";
+import type { GetServerSideProps, NextPage } from "next";
 
 const queryClient = new QueryClient();
-export const getServerSideProps = async () => {
-
-  await queryClient.prefetchQuery(['books'], () => GET_BOOKS_LIST());
+export const getServerSideProps: GetServerSideProps = async () => {
+  await queryClient.prefetchQuery(["recent-books"], () => GET_LATEST_BOOKS(10));
 
   return {
     props: {
@@ -14,16 +15,11 @@ export const getServerSideProps = async () => {
   }
 }
 
-const BooksPage = () => {
-  const { isLoading, data, error } = useQuery(['books'], () => GET_BOOKS_LIST());
-
-  console.log(data)
-  { error && <p>error</p> }
-  { isLoading ? 'Loading ...' : '' }
-
+const BooksPage: NextPage = () => {
   return (
-    <section className='books-page'>
-      <BooksList books={data} />
+    <section className="books-page">
+      <BookFinder />
+      <RecentBooks limit={3} />
     </section>
   );
 };
