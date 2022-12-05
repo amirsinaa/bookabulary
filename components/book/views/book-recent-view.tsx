@@ -4,7 +4,7 @@ import { LoadingContentSkeleton } from '@/components/common/loading-content-skel
 import { useQuery } from '@tanstack/react-query';
 
 export function RecentBooks({ limit }) {
-  const { isLoading, data: recentBooks, error } = useQuery(['recent-books'], () => GET_LATEST_BOOKS(limit));
+  const { isLoading, data: recentBooks, error } = useQuery(['recent-books', limit], () => GET_LATEST_BOOKS(limit));
 
   if (error instanceof Error) return <p>{error.message}</p>;
 
