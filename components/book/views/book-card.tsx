@@ -1,11 +1,9 @@
-import { GET_PROFILE } from '@/components/user/api/GET_PROFILE';
-import { useQuery } from '@tanstack/react-query';
+import { useAuthor } from "@/components/book/hooks/use-author";
 import Link from "next/link";
 
 
 export const BookCard = ({ book, showDescription = false }) => {
-
-  const { isLoading, data: bookAdmin } = useQuery([`${book.name}${book.profile_id}-book-admin`], () => GET_PROFILE(book.profile_id));
+  const author = useAuthor(book.profile_id);
 
   return (
     <article className="flex flex-col justify-center w-full p-4 m-2 bg-white rounded-lg md:p-10 md:w-5/12 min-h-24 drop-shadow-md grow">
@@ -16,8 +14,8 @@ export const BookCard = ({ book, showDescription = false }) => {
           </Link>
         </h1>
         <span
-          className={`flex items-center px-2 mx-0 text-sm text-white rounded-xl bg-lime-700 ${isLoading ? 'animate-pulse' : ''}`}>
-          Added by: {bookAdmin?.data?.username}
+          className="flex items-center px-2 mx-0 text-sm text-white rounded-xl bg-lime-700">
+          Added by: {author.data?.data?.username}
         </span>
       </div>
       {showDescription && <p className="mt-2 text-justify book-description">{book.description}</p>}
