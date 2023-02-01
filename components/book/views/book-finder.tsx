@@ -13,7 +13,7 @@ export const BookFinder = () => {
 
   return (
     <section className="flex flex-col flex-wrap justify-center">
-      <h3 className="py-10 text-4xl font-bold text-center text-teal-800">Find a book you're reading</h3>
+      <h3 className="py-10 text-4xl font-bold text-center text-teal-800 dark:text-white">Find a book you're reading</h3>
       <div className="relative">
         {(books.fetchStatus !== 'idle' && books.isLoading) && <LoadingSpinner color="text-teal-800" className="absolute right-0 w-10 h-full flex-col justify-center" />}
         <Input type="text" name="bookName" aria-placeholder="Enter a book name" placeholder="Enter a book name" value={bookName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBookName(e.target.value)} />

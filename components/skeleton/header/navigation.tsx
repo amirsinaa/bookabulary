@@ -1,10 +1,16 @@
+import { useColorMode } from '@/context/color-mode.context'
+import { useContext } from 'react';
 import { useSessionContext } from '@supabase/auth-helpers-react'
+import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/common/button";
+import useDarkMode from '@/hooks/use-dark-mode'
 import Router from 'next/router'
 import Link from 'next/link'
 
 export default function Navigation() {
   const { session, supabaseClient } = useSessionContext()
-
+  // const { isDarkMode, toggle } = useDarkMode()
+  const { colorMode, setColorMode } = useColorMode();
   return (
     <ul className="flex space-x-4">
       <li>
@@ -48,6 +54,9 @@ export default function Navigation() {
           </Link>
         </li>
       )}
+      <li>
+        <Button onClick={() => setColorMode(colorMode === 'light' ? 'dark' : 'light')} extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110">{colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}</Button>
+      </li>
     </ul>
   )
 }
