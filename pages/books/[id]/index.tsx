@@ -45,7 +45,7 @@ const BooksPage: NextPage = () => {
         {vocabulariesIsLoading && <LoadingContentSkeleton format={4} />}
         {vocabulariesError instanceof Error && <p>{vocabulariesError.message}</p>}
         <section className="flex flex-row flex-wrap justify-center p-2 my-8 md:p-12 md:my-10 rounded-xl bg-lime-100 drop-shadow-xl">
-          {vocabularies?.data.map(vocabulary => {
+          {vocabularies?.data?.map(vocabulary => {
             return (
               <Link
                 key={vocabulary.id}
