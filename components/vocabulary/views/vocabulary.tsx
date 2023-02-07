@@ -1,42 +1,41 @@
-//@ts-nocheck
+//TODO: refactor and seprate components and extract logics to custom hooks
 
 import React from 'react'
 import {
-  Column,
-  Table,
+  RowData,
   ColumnDef,
   useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  flexRender,
-  RowData,
-} from '@tanstack/react-table'
+} from '@tanstack/react-table';
+import {
+  UPDATE_VOCABULARY
+} from '@/components/vocabulary/api/UPDATE_VOCABULARY';
+import {
+  CREATE_VOCABULARY
+} from '@/components/vocabulary/api/CREATE_VOCABULARY';
+import { useColorMode } from '@/context/color-mode.context';
+import { ToastContainer, toast } from 'react-toastify';
+import { useMutation } from '@tanstack/react-query';
+import { Input } from '@/components/common/input';
+import VocabularyTableRow from './vocabulary-table-row';
+import ReactQueryUiErrorHandler from '@/components/common/react-query-ui-error';
+import VocabularyTableTitle from './vocabulary-table-title';
+import VocabularyTableColumnsTitle from './vocabulary-table-columns-title';
+import VocabularyFormControls from '../views/vocabulary-table-controls'
+import 'react-toastify/dist/ReactToastify.css';
+import ReactTableColumnSkeleton from './react-table-column-skeleton';
+import type { DictionaryData } from '../types/vocabulary';
 
-export type Person = {
-  firstName: string
-  lastName: string
-  age: number
-  visits: number
-  progress: number
-  status: 'relationship' | 'complicated' | 'single'
-  subRows?: Person[]
-}
+import {
+  PlusIcon,
+  RocketIcon,
+  MagicWandIcon,
+} from '@radix-ui/react-icons';
 
-export type Dictionary = {
-  data: DictionaryData[]
-}
 
-export type DictionaryData = {
-  id: string,
-  original: Word
-  translations: Word
-}
-
-export type Word = {
-  language: string,
-  value: string
-}
+import useSkipper from '../hooks/use-skipper';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -44,135 +43,118 @@ declare module '@tanstack/react-table' {
   }
 }
 
-// Give our default column cell renderer editing superpowers!
-const defaultColumn: Partial<ColumnDef<DictionaryData>> = {
-  cell: ({ getValue, row: { index }, column: { id }, table }) => {
-    const initialValue = getValue()
-    // We need to keep and update the state of the cell normally
-    const [value, setValue] = React.useState(initialValue)
-
-    // When the input is blurred, we'll call our table meta's updateData function
-    const onBlur = () => {
-      table.options.meta?.updateData(index, id, value)
-    }
-
-    // If the initialValue is changed external, sync it up with our state
-    React.useEffect(() => {
-      setValue(initialValue)
-    }, [initialValue])
-    return (
-      <input
-        value={value as string}
-        onChange={e => setValue(e.target.value)}
-        onBlur={onBlur}
-      />
-    )
-  },
-}
-
-function useSkipper() {
-  const shouldSkipRef = React.useRef(true)
-  const shouldSkip = shouldSkipRef.current
-
-  // Wrap a function with this to skip a pagination reset temporarily
-  const skip = React.useCallback(() => {
-    shouldSkipRef.current = false
-  }, [])
-
-  React.useEffect(() => {
-    shouldSkipRef.current = true
-  })
-
-  return [shouldSkip, skip] as const
-}
-export const Vocabulary = ({ vocabulary }) => {
-  const { data: { title, dictionary } } = vocabulary;
-
-  //
-
-  const rerender = React.useReducer(() => ({}), {})[1]
-
+export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title', dictionary = [] }) => {
+  const { colorMode } = useColorMode();
+  const [vocabularyTitle, setVocabularyTitle] = React.useState(title);
   const columns = React.useMemo<ColumnDef<DictionaryData>[]>(
     () => [
       {
-        header: title,
-        footer: props => props.column.id,
+        header: vocabularyTitle,
         columns: [
           {
             id: 'tableStateOriginalWord',
             accessorKey: 'tableStateOriginalWord',
             accessorFn: row => row.original.value,
             header: () => <span>Original Word</span>,
-            footer: props => props.column.id,
           },
           {
             id: 'tableStateTranslationWord',
             accessorKey: 'tableStateTranslationWord',
             accessorFn: row => row.translations.value,
             header: () => <span>Translation</span>,
-            footer: props => props.column.id,
           },
         ],
       },
     ],
     []
-  )
+  );
+  const [data, setData] = React.useState<DictionaryData[]>(dictionary);
+  const [tableCacheFlag, setTableCacheFlag] = React.useState(false);
+  const vocabularyMutation = useMutation((vocabulary) => vocabularyId ? UPDATE_VOCABULARY(vocabulary) : CREATE_VOCABULARY(vocabulary));
+  const vocabularyMutationMethod = (method: 'UPDATE' | 'CREATE') => {
+    if (method === 'UPDATE') {
+      return {
+        vocabularyId: vocabularyId,
+        bookId: bookId,
+        updates: {
+          title: vocabularyTitle,
+          dictionary: { data: data }
+        }
+      }
+    } else {
 
-  const [data, setData] = React.useState<DictionaryData[]>(dictionary.data)
-  const memoizedFormData = React.useMemo(() => { console.log(data) }, [data])
-  const refreshData = () => setData(dictionary.data)
-  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
+      return {
+        updates: {
+          book_id: bookId,
+          title: vocabularyTitle,
+          dictionary: { data: data }
+        }
+      }
+    }
+  }
 
+  const notifySuccessfulPost = () => toast('Data has been updated successfully!');
+  const notifyUnSuccessfulPost = () => toast('There was an issue with updating your data!!');
+  const initialRender = React.useRef(true);
+  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 
   React.useEffect(() => {
-    console.log(memoizedFormData)
-  }, [memoizedFormData])
+    if (initialRender.current) {
+      initialRender.current = false
+    } else {
+      setTableCacheFlag(true);
+    }
+  }, [data, vocabularyTitle, tableCacheFlag])
+  React.useEffect(() => {
+    if (vocabularyMutation.isSuccess && vocabularyMutation.data.error === null) {
+      notifySuccessfulPost();
+    } else if (vocabularyMutation.isSuccess && vocabularyMutation.data.error) {
+      notifyUnSuccessfulPost();
+    }
+  }, [vocabularyMutation.isSuccess]);
 
   const table = useReactTable({
     data,
     columns,
-    defaultColumn,
+    defaultColumn: ReactTableColumnSkeleton,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex,
-    // Provide our updateData function to our table meta
     meta: {
       updateData: (rowIndex, columnId, value) => {
-        // Skip age index reset until after next rerender
         skipAutoResetPageIndex()
+        //@ts-expect-error
         setData(old =>
           old.map((row, index) => {
             if (index === rowIndex) {
               if (columnId === 'tableStateOriginalWord') {
                 const newState = {
                   ...old[rowIndex]!,
-                  "id": row.id,
-                  "original": {
-                    "language": row.original.language,
-                    "value": value
+                  'id': row.id,
+                  'original': {
+                    'language': row.original.language,
+                    'value': value
                   },
-                  "translations": {
-                    "language": row.translations.language,
-                    "value": row.translations.value
+                  'translations': {
+                    'language': row.translations.language,
+                    'value': row.translations.value
                   }
                 }
-                console.log(newState)
                 return newState;
               } else {
                 const newState = {
                   ...old[rowIndex]!,
-                  "id": row.id,
-                  "original": {
-                    "language": row.original.language,
-                    "value": row.original.value
+                  'id': row.id,
+                  'original': {
+                    'language': row.original.language,
+                    'value': row.original.value
                   },
-                  "translations": {
-                    "language": row.translations.language,
-                    "value": value
+                  'translations': {
+                    'language': row.translations.language,
+                    'value': value
                   }
                 }
-                console.log(newState)
                 return newState;
               }
             }
@@ -180,180 +162,67 @@ export const Vocabulary = ({ vocabulary }) => {
           })
         )
       },
-    },
-    debugTable: true,
+    }
   })
-  //
   return (
-    <article className="flex-row">
-      <div className="p-2">
-        <div className="h-2" />
-        <table>
+    <article>
+      <div>
+        <table className='w-full p-0'>
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  return (
-                    <th key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder ? null : (
-                        <div>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getCanFilter() ? (
-                            <div>
-                              <Filter column={header.column} table={table} />
-                            </div>
-                          ) : null}
-                        </div>
-                      )}
-                    </th>
-                  )
-                })}
-              </tr>
-            ))}
+            <VocabularyTableTitle table={table}>
+              <Input
+                type='text'
+                classOverrides='border-0 rounded-t-md block w-full py-5 text-center font-extrabold text-2xl bg-lime-200 shadow focus:outline-none focus:bg-lime-300 dark:text-black'
+                value={vocabularyTitle as string}
+                onChange={e => setVocabularyTitle(e.target.value)}
+                placeholder='Enter a title'
+              />
+            </VocabularyTableTitle>
+            <VocabularyTableColumnsTitle table={table} />
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => {
-              return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => {
-                    return (
-                      <td key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    )
-                  })}
-                </tr>
-              )
-            })}
+            <VocabularyTableRow table={table} />
           </tbody>
         </table>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <button
-            className="border rounded p-1"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {'<<'}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {'<'}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {'>'}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            {'>>'}
-          </button>
-          <span className="flex items-center gap-1">
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{' '}
-              {table.getPageCount()}
-            </strong>
-          </span>
-          <span className="flex items-center gap-1">
-            | Go to page:
-            <input
-              type="number"
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={e => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0
-                table.setPageIndex(page)
-              }}
-              className="border p-1 rounded w-16"
-            />
-          </span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={e => {
-              table.setPageSize(Number(e.target.value))
-            }}
-          >
-            {[1, 3, 5, 10, 20, 30, 40, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
+
+        <div className='border-0 m-0 hover:cursor-pointer flex justify-center bg-lime-50 hover:bg-lime-200 rounded-b-md' onClick={
+          () => {
+            // @ts-expect-error
+            return setData(old => [...old, {
+              id: table.getRowModel().rows.length++,
+              original: {},
+              translations: {}
+            }])
+          }}>
+          <PlusIcon width={34} height={34} className='text-lime-800 font-bold' />
         </div>
-        <div>{table.getRowModel().rows.length} Rows</div>
-        <div>
-          <button onClick={() => rerender()}>Force Rerender</button>
-        </div>
-        <div>
-          <button onClick={() => refreshData()}>Refresh Data</button>
-        </div>
+
+        {vocabularyId && <VocabularyFormControls table={table} />}
+
+        <ReactQueryUiErrorHandler queryKey={vocabularyMutation} />
+
+        {tableCacheFlag && <button className={`mt-4 rounded-sm w-full btn-light text-xl flex gap-2 py-2 justify-center ${!!vocabularyMutation.isLoading ? 'animate-pulse' : ''}`} onClick={() => {
+          //@ts-expect-error
+          vocabularyMutation.mutate(vocabularyId === null ? vocabularyMutationMethod('CREATE') : vocabularyMutationMethod('UPDATE'))
+        }
+
+        }>{!!vocabularyMutation.isLoading ? <>
+          Saving ... <RocketIcon className='animate-bounce' width={34} height={34} />
+        </>
+          : <>Save <MagicWandIcon width={34} height={34} /></>} </button>}
+        <ToastContainer
+          position='top-center'
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme={colorMode === 'light' ? 'light' : 'dark'}
+        />
       </div>
     </article>
   );
-}
-
-function Filter({
-  column,
-  table,
-}: {
-  column: Column<any, any>
-  table: Table<any>
-}) {
-  const firstValue = table
-    .getPreFilteredRowModel()
-    .flatRows[0]?.getValue(column.id)
-
-  const columnFilterValue = column.getFilterValue()
-
-  return typeof firstValue === 'number' ? (
-    <div className="flex space-x-2">
-      <input
-        type="number"
-        value={(columnFilterValue as [number, number])?.[0] ?? ''}
-        onChange={e =>
-          column.setFilterValue((old: [number, number]) => [
-            e.target.value,
-            old?.[1],
-          ])
-        }
-        placeholder={`Min`}
-        className="w-24 border shadow rounded"
-      />
-      <input
-        type="number"
-        value={(columnFilterValue as [number, number])?.[1] ?? ''}
-        onChange={e =>
-          column.setFilterValue((old: [number, number]) => [
-            old?.[0],
-            e.target.value,
-          ])
-        }
-        placeholder={`Max`}
-        className="w-24 border shadow rounded"
-      />
-    </div>
-  ) : (
-    <input
-      type="text"
-      value={(columnFilterValue ?? '') as string}
-      onChange={e => column.setFilterValue(e.target.value)}
-      placeholder={`Search...`}
-      className="w-36 border shadow rounded"
-    />
-  )
 }
