@@ -28,9 +28,18 @@ const VocabularyPage: NextPage = () => {
 
   return (
     <section className="vocabulary-page">
-      <Button onClick={() => router.back()} extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"><ArrowLeftIcon className="mt-5" width={45} height={45} /></Button>
-      <Vocabulary vocabulary={vocabulary}>
-      </Vocabulary>
+      <Button
+        onClick={() => router.back()}
+        extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
+      >
+        <ArrowLeftIcon className="mt-5" width={45} height={45} />
+      </Button>
+      <Vocabulary
+        bookId={vocabulary.data.book_id}
+        vocabularyId={vocabulary.data.id}
+        title={vocabulary.data.title}
+        dictionary={vocabulary.data.dictionary.data}
+      />
     </section>
   );
 };

@@ -2,6 +2,7 @@ import { useProfile } from "@/components/user/hooks/use-profile";
 import { User } from "@/components/user/types/profile";
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/common/input";
+import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 
 export function ProfileForm({ user }: User) {
   const [username, setUsername] = useState<string>("");
@@ -16,7 +17,7 @@ export function ProfileForm({ user }: User) {
     }
   }, [data]);
 
-  if (error instanceof Error) return <p>{error.message}</p>;
+  if (error instanceof Error) return <ReactQueryUiErrorHandler queryKey={data} />;
 
   return (
     <form
