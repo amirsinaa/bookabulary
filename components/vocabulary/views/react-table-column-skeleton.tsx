@@ -6,12 +6,15 @@ import { useState, useEffect } from 'react'
 const ReactTableColumnSkeleton: Partial<ColumnDef<DictionaryData>> = {
   cell: ({ getValue, row: { index }, column: { id }, table }) => {
     const initialValue = getValue()
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [value, setValue] = useState(initialValue)
     const onBlur = () => {
       table.options.meta?.updateData(index, id, value)
     }
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       setValue(initialValue)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialValue])
     return (
       <Input

@@ -15,6 +15,7 @@ export function ProfileForm({ user }: User) {
       setUsername(profile.data.username);
       setWebsite(profile.data.website);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   if (error instanceof Error) return <ReactQueryUiErrorHandler queryKey={data} />;

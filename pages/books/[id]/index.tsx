@@ -45,7 +45,7 @@ const BooksPage: NextPage = () => {
         {vocabulariesIsLoading && <LoadingContentSkeleton format={4} />}
         {vocabulariesError instanceof Error && <p>{vocabulariesError.message}</p>}
         <section className="flex flex-row flex-wrap justify-center p-2 my-8 md:p-12 md:my-10 rounded-xl bg-lime-100 drop-shadow-xl">
-          {(vocabularies.data).length === 0 ? <p
+          {(vocabularies.data).length === 0 ? <div
             className="flex flex-col items-center m-auto f-full">
             <h5
               className="pb-10 text-4xl font-bold text-center text-teal-800"
@@ -61,7 +61,7 @@ const BooksPage: NextPage = () => {
                 Create one
               </Link>
             </Button>
-          </p> : vocabularies?.data?.map(vocabulary => {
+          </div> : vocabularies?.data?.map(vocabulary => {
             return (
               <Link
                 key={vocabulary.id}
