@@ -3,10 +3,10 @@ import Link from 'next/link'
 
 export default function Header() {
   return (
-    <header className="flex justify-between p-4 bg-white border-b">
+    <header className="flex justify-between p-4 bg-white dark:bg-gray-800 border-b dark:border-gray-900">
       <h1>
         <Link href="/">
-          <a className="text-green-600 hover:text-green-600">
+          <a className="text-green-700 dark:text-green-300 hover:text-green-600">
             Bookabulary
           </a>
         </Link>

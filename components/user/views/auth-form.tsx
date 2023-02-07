@@ -1,11 +1,13 @@
-import { useSessionContext } from '@supabase/auth-helpers-react'
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { Button } from "@/components/common/button";
+import { Input } from "@/components/common/input";
 import { useState } from 'react';
 
 export function SigninForm() {
-  const { supabaseClient } = useSessionContext()
-  const [loading, setLoading] = useState(false)
-  const [email, setEmail] = useState('')
-  const [emailSent, setEmailSent] = useState(false)
+  const [emailSent, setEmailSent] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { supabaseClient } = useSessionContext();
+  const [email, setEmail] = useState<string>('');
 
   const handleLogin = async (email: string) => {
     try {
@@ -27,9 +29,9 @@ export function SigninForm() {
           <p>An e-mail has been sent to your e-mail address.</p>
           <p>Please click the link in this mail to sign in.</p>
           <p>
-            <button className="btn-link" onClick={() => setEmailSent(false)}>
+            <Button className="btn-link" onClick={() => setEmailSent(false)}>
               Retry
-            </button>
+            </Button>
           </p>
         </div>
       ) : (
@@ -49,9 +51,8 @@ export function SigninForm() {
               E-mail address
             </label>
 
-            <input
+            <Input
               id="email"
-              className="field "
               type="email"
               placeholder="Your email"
               value={email}
@@ -61,9 +62,9 @@ export function SigninForm() {
             />
           </div>
           <div className="w-full">
-            <button type="submit" className="w-full btn" disabled={loading}>
-              <span>{loading ? 'Processing…' : 'Send magic link'}</span>
-            </button>
+            <Button type="submit" className="w-full btn" disabled={loading}>
+              <span>{loading ? 'Processing…' : 'Send my magic link'}</span>
+            </Button>
           </div>
         </form>
       )}

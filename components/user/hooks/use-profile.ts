@@ -1,45 +1,82 @@
-import type { Profile } from '@/components/user/types/profile';
-import type { definitions } from '@/types/supabase-open-api'
-import type { AuthSession } from '@supabase/supabase-js'
-import { supabase } from '@/api/supabase-client'
-import { useEffect, useState } from 'react'
+import type {
+  ProfileState,
+  ProfileAction,
+  ProfileReducerFunc
+} from "@/components/user/types/profile";
+import { UPDATE_PROFILE } from "@/components/user/api/UPDATE_PROFILE";
+import { GET_PROFILE } from "@/components/user/api/GET_PROFILE";
+import { useEffect, useReducer } from "react";
 
+function profileReducer(state: ProfileState, action: ProfileAction) {
+  const { type, payload } = action
+  switch (type) {
+    case "SET_LOADING":
+      return { ...state, loading: payload.loading }
+    case "SET_PROFILE":
+      return {
+        ...state, data: {
+          username: payload.data.username,
+          website: payload.data.website,
+        }
+      }
+    case "SET_ERROR":
+      return { ...state, error: payload.error };
+    default:
+      throw Error("Unkown action");
+  }
+}
 
-export function useProfile(session: AuthSession) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<any | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
+export function useProfile(id: string) {
+  const [profile, profileDispatch] = useReducer<ProfileReducerFunc>(profileReducer, {
+    data: null,
+    loading: false,
+    error: null
+  });
 
   useEffect(() => {
-    (async function () {
+    (async () => {
       try {
-        setLoading(true)
-
-        const { data, error, status } = await supabase
-          .from<definitions["profiles"]>('profiles')
-          .select(`username, website, avatar_url`)
-          .eq('id', session.user.id)
-          .single()
-
-
+        profileDispatch({ type: "SET_LOADING", payload: { loading: true } });
+        const { data, error, status } = await GET_PROFILE(id);
         if (error && status !== 406) {
-          throw error
+          profileDispatch({ type: "SET_ERROR", payload: { error: error.message } });
         }
 
         if (data) {
-          setProfile({
-            username: data.username,
-            avatarUrl: data.avatar_url,
-            website: data.website
-          })
+          profileDispatch({
+            type: "SET_PROFILE", payload: {
+              data: {
+                username: data.username,
+                website: data.website
+              }
+            }
+          });
         }
-      } catch (error: any) {
-        setError(error)
       } finally {
-        setLoading(false)
+        profileDispatch({ type: "SET_LOADING", payload: { loading: false } });
       }
-    })()
-  }, [session])
 
-  return { loading, error, profile }
+    })();
+  }, [id]);
+
+  const update = async (profile) => {
+    try {
+      profileDispatch({ type: "SET_LOADING", payload: { loading: true } });
+      const updates = {
+        username: profile.username,
+        website: profile.website,
+        id: id
+      }
+
+      const { error, status } = await UPDATE_PROFILE(id, updates);
+      if (error && status !== 200) {
+        profileDispatch({ type: "SET_ERROR", payload: { error: error.message } });
+      }
+
+    }
+    finally {
+      profileDispatch({ type: "SET_LOADING", payload: { loading: false } });
+    }
+  }
+  return [{ profile }, { update }];
 }

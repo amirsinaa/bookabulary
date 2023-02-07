@@ -29,6 +29,7 @@
 			"@/utils/*": ["./utils/*"],
 			"@/types/*": ["./types/*"],
 			"@/styles/*": ["./styles/*"],
+			"@/context/*": ["./context/*"],
 			"@/components/*": ["./components/*"]
 		},
 		"incremental": true

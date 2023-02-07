@@ -125,7 +125,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.vocabulary.id"];
-          dictonaery?: parameters["rowFilter.vocabulary.dictonaery"];
+          dictionary?: parameters["rowFilter.vocabulary.dictionary"];
           book_id?: parameters["rowFilter.vocabulary.book_id"];
           created_at?: parameters["rowFilter.vocabulary.created_at"];
           updated_at?: parameters["rowFilter.vocabulary.updated_at"];
@@ -181,7 +181,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.vocabulary.id"];
-          dictonaery?: parameters["rowFilter.vocabulary.dictonaery"];
+          dictionary?: parameters["rowFilter.vocabulary.dictionary"];
           book_id?: parameters["rowFilter.vocabulary.book_id"];
           created_at?: parameters["rowFilter.vocabulary.created_at"];
           updated_at?: parameters["rowFilter.vocabulary.updated_at"];
@@ -201,7 +201,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.vocabulary.id"];
-          dictonaery?: parameters["rowFilter.vocabulary.dictonaery"];
+          dictionary?: parameters["rowFilter.vocabulary.dictionary"];
           book_id?: parameters["rowFilter.vocabulary.book_id"];
           created_at?: parameters["rowFilter.vocabulary.created_at"];
           updated_at?: parameters["rowFilter.vocabulary.updated_at"];
@@ -460,7 +460,7 @@ export interface definitions {
      */
     id: string;
     /** Format: json */
-    dictonaery?: unknown;
+    dictionary?: unknown;
     /**
      * Format: uuid
      * @description Note:
@@ -584,7 +584,7 @@ export interface parameters {
   /** Format: uuid */
   "rowFilter.vocabulary.id": string;
   /** Format: json */
-  "rowFilter.vocabulary.dictonaery": string;
+  "rowFilter.vocabulary.dictionary": string;
   /** Format: uuid */
   "rowFilter.vocabulary.book_id": string;
   /** Format: timestamp with time zone */

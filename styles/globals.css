@@ -2,12 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+ --toastify-color-progress-light: #D9F99D !important;
+ --toastify-color-progress-dark: #D9F99D !important;
+}
+
+body * {
+    @apply transition-colors duration-200;
+}
+
+tbody {
+  border-bottom: 1px solid lightgray;
+}
+
+th {
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  padding: 2px 4px;
+}
+
+tfoot {
+  color: gray;
+}
+
+tfoot th {
+  font-weight: normal;
+}
+
+.dark {
+  @apply text-white
+ }
+
+.light {
+  @apply text-gray-900
+}
+
 .btn {
-  @apply bg-green-700 hover:bg-green-600 rounded-md px-4 py-2 text-white cursor-pointer;
+  @apply bg-green-700 dark:text-green-300 hover:bg-green-600 rounded-md px-4 py-2 text-white cursor-pointer;
+}
+
+.btn-light {
+  @apply bg-lime-200 hover:bg-lime-300 rounded-md px-4 py-2 text-black cursor-pointer;
 }
 
 .btn-link {
-  @apply text-green-700 hover:text-green-600 cursor-pointer;
+  @apply text-green-700 dark:text-green-300 hover:text-green-600 cursor-pointer;
 }
 
 .label {

@@ -1,21 +1,36 @@
+
+import {
+  QueryClientProvider,
+  QueryClient,
+  Hydrate,
+} from '@tanstack/react-query';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ColorModeProvider } from '@/context/color-mode.context'
+import { PageProps, ExtendedAppProps } from '@/types/next';
 import { Layout } from '@/components/skeleton/layout';
-import { AppProps } from 'next/app';
 import { useState } from 'react'
 import '@/styles/globals.css';
 
-function Bookabulary({ Component, pageProps }: AppProps) {
+const Bookabulary = ({ Component, pageProps }: ExtendedAppProps<PageProps>) => {
   const [supabaseClient] = useState(() => createBrowserSupabaseClient())
+  const [queryClient] = useState(() => new QueryClient());
   return (
-
-    <SessionContextProvider
-      supabaseClient={supabaseClient}
-    >
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </SessionContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <Hydrate state={pageProps.dehydratedState}>
+        <SessionContextProvider
+          supabaseClient={supabaseClient}
+        >
+          <ColorModeProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ColorModeProvider>
+        </SessionContextProvider>
+      </Hydrate>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 
