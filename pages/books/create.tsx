@@ -7,6 +7,7 @@ import { User } from "@/components/user/types/profile";
 import { useMutation } from "@tanstack/react-query";
 import { Input } from "@/components/common/input";
 import React, { useState } from "react";
+import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   redirectTo: "/user/auth",
@@ -55,7 +56,7 @@ const CreateBooksPage: NextPage = ({ user }: User) => {
         />
         <span className="absolute bottom-0 right-0 p-4">{description.length}/200</span>
       </div>
-      {(bookMutation.isError && bookMutation.error instanceof Error) && <p className="mb-8 text-sm text-red-500">{bookMutation.error.message}</p>}
+      <ReactQueryUiErrorHandler queryKey={bookMutation} />
       <div>
         <button
           className="w-full btn"
