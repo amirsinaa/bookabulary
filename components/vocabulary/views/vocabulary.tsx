@@ -16,7 +16,9 @@ import {
   CREATE_VOCABULARY
 } from '@/components/vocabulary/api/CREATE_VOCABULARY';
 import { useColorMode } from '@/context/color-mode.context';
+import { useState, useEffect } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
+import ReactTableColumnSkeleton from '../views/react-table-column-skeleton'
 import { useMutation } from '@tanstack/react-query';
 import { Input } from '@/components/common/input';
 import VocabularyTableRow from './vocabulary-table-row';
@@ -25,7 +27,6 @@ import VocabularyTableTitle from './vocabulary-table-title';
 import VocabularyTableColumnsTitle from './vocabulary-table-columns-title';
 import VocabularyFormControls from '../views/vocabulary-table-controls'
 import 'react-toastify/dist/ReactToastify.css';
-import ReactTableColumnSkeleton from './react-table-column-skeleton';
 import type { DictionaryData } from '../types/vocabulary';
 
 import {
@@ -66,6 +67,7 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
         ],
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
   const [data, setData] = React.useState<DictionaryData[]>(dictionary);
@@ -104,6 +106,7 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
     } else {
       setTableCacheFlag(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, vocabularyTitle, tableCacheFlag])
   React.useEffect(() => {
     if (vocabularyMutation.isSuccess && vocabularyMutation.data.error === null) {
@@ -111,6 +114,7 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
     } else if (vocabularyMutation.isSuccess && vocabularyMutation.data.error) {
       notifyUnSuccessfulPost();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vocabularyMutation.isSuccess]);
 
   const table = useReactTable({
