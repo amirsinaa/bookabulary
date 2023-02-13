@@ -20,7 +20,10 @@ export default function Filter({
           placeholder={`Search...`}
           classOverrides='h-16 min-h-full flex-row w-full py-2 px-0 absolute text-center font-normal text-md text-black focus:outline-none'
         />
-        <span className='absolute top-5 right-4' onClick={() => setFilterVisibility(prev => !prev)}><Cross1Icon width={24} height={24} className='hover:cursor-pointer' /></span>
+        <span className='absolute top-5 right-4' onClick={() => {
+          column.setFilterValue(null)
+          setFilterVisibility(prev => !prev)
+        }}><Cross1Icon width={24} height={24} className='hover:cursor-pointer' /></span>
       </> : <span onClick={() => setFilterVisibility(prev => !prev)}><MagnifyingGlassIcon width={24} height={24} className='hover:cursor-pointer' /></span>
   )
 }
