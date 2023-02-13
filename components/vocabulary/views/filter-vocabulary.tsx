@@ -12,6 +12,29 @@ export default function Filter({
   const columnFilterValue = column.getFilterValue();
   const searchInputElementRef = useRef<HTMLInputElement>(null);
 
+  // ################################################## //
+
+  //TODO: fix row search and edit bug when using in/out bound component click listener
+  //Below code check that if user clicks outside of the search input automaticly close search input and removes the search query
+  //but due to a bug that makes a conflict in search and instant edit this piece of code is temporarily disabled
+
+  // useEffect(() => {
+  //   function handleClickOutside(event) {
+  //     if (filterVisibility) {
+  //       if (searchInputElementRef.current && !searchInputElementRef.current.contains(event.target)) {
+  //         column.setFilterValue(null)
+  //         setFilterVisibility(false)
+  //       }
+  //     }
+  //   }
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [searchInputElementRef, filterVisibility])
+
+  // ################################################## //
+
   useEffect(() => {
     if (filterVisibility) {
       searchInputElementRef.current?.focus()
