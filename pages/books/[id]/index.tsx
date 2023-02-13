@@ -63,14 +63,7 @@ const BooksPage: NextPage = () => {
               </Link>
             </Button>
           </div> : vocabularies?.data?.map(vocabulary => {
-            return (
-              <Link
-                key={vocabulary.id}
-                href={{ pathname: "/books/vocabulary/[id]", query: { id: vocabulary.id } }}
-                className="hover:cursor-pointer">
-                <VocabularyCard data={vocabulary} />
-              </Link>
-            )
+            return <VocabularyCard data={vocabulary} />
           })}
         </section>
         {vocabularies.data.length !== 0 && <div className="flex justify-center items-center text-center">
