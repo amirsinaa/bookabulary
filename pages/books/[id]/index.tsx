@@ -10,12 +10,13 @@ import type { GetServerSideProps, NextPage } from "next";
 import { GET_BOOK } from "@/components/book/api/GET_BOOK";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
+import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
 import { Book } from "@/components/book/views/book";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient(REACT_QUERY_DEFAULT_OPTIONS);
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { id } = params;
   await queryClient.prefetchQuery(["book", id], () => GET_BOOK(String(id)));
