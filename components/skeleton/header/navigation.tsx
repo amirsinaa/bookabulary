@@ -7,20 +7,20 @@ export default function Navigation() {
   return (
     <ul className='flex space-x-4'>
       <li className='text-md'>
-        <Link href='/about'>
-          <a className='btn-link'>About</a>
+        <Link className='btn-link' href='/about'>
+          About
         </Link>
       </li>
       <li className='text-md'>
-        <Link href='/books'>
-          <a className='btn-link'>Books</a>
+        <Link className='btn-link' href='/books'>
+          Books
         </Link>
       </li>
       {session ? (
         <>
           <li className='text-md'>
-            <Link href='/user/profile'>
-              <a className='btn-link'>Profile</a>
+            <Link className='btn-link' href='/user/profile'>
+              Profile
             </Link>
           </li>
           <li className='text-md'>
@@ -37,8 +37,8 @@ export default function Navigation() {
         </>
       ) : (
         <li className='text-md'>
-          <Link href='/user/auth'>
-            <a className='btn-link'>Login/Register</a>
+          <Link className='btn-link' href='/user/auth'>
+            Login/Register
           </Link>
         </li>
       )}
