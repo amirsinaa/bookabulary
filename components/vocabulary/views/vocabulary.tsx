@@ -168,6 +168,7 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
       },
     }
   })
+
   return (
     <article>
       <div>
@@ -189,7 +190,7 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
           </tbody>
         </table>
 
-        <div className='border-0 m-0 hover:cursor-pointer flex justify-center bg-lime-50 hover:bg-lime-200 rounded-b-md' onClick={
+        {!table.getCanNextPage() && <div className='border-0 m-0 hover:cursor-pointer flex justify-center bg-lime-50 hover:bg-lime-200 rounded-b-md' onClick={
           () => {
             // @ts-expect-error
             return setData(old => [...old, {
@@ -197,9 +198,10 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
               original: {},
               translations: {}
             }])
+
           }}>
           <PlusIcon width={34} height={34} className='text-lime-800 font-bold' />
-        </div>
+        </div>}
 
         {vocabularyId && <VocabularyFormControls table={table} />}
 
