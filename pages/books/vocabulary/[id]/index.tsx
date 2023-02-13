@@ -4,9 +4,10 @@ import { Vocabulary } from "@/components/vocabulary/views/vocabulary";
 import type { GetServerSideProps, NextPage } from "next";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
+import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
 import { useRouter } from "next/router";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient(REACT_QUERY_DEFAULT_OPTIONS);
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { id } = params;
   await queryClient.prefetchQuery(["vocabulary", id], () => GET_VOCABULARY(String(id)));
