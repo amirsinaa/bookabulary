@@ -30,6 +30,7 @@
 			"@/types/*": ["./types/*"],
 			"@/styles/*": ["./styles/*"],
 			"@/context/*": ["./context/*"],
+			"@/constant/*": ["./constants/*"],
 			"@/components/*": ["./components/*"]
 		},
 		"incremental": true
