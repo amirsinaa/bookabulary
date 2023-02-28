@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
 import { Vocabulary } from "@/components/vocabulary/views/vocabulary";
 import type { GetServerSidePropsContext, GetServerSideProps, NextPage } from "next";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
@@ -35,7 +35,7 @@ export type Referer = {
   refererBookId: string
 }
 
-const CreateVocabularyPage: NextPage = ({ refererBookId }: Referer) => {
+const CreateVocabularyPage: NextPage = (refererBookId: Referer, { user }: { user: User }) => {
   const router = useRouter();
   { }
   return (
@@ -47,7 +47,13 @@ const CreateVocabularyPage: NextPage = ({ refererBookId }: Referer) => {
         >
           <ArrowLeftIcon className="mt-5" width={45} height={45} />
         </Button>
-        <Vocabulary bookId={refererBookId} dictionary={[]} /></>}
+        <Vocabulary
+          profileId={user.id}
+          vocabularyOwner={user.id}
+          bookId={refererBookId}
+          dictionary={[]}
+        />
+      </>}
     </section >
   );
 };
