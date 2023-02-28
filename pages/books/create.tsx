@@ -1,23 +1,43 @@
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
+import {
+  createServerSupabaseClient,
+  User
+} from "@supabase/auth-helpers-nextjs";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage
+} from "next";
 import { POST_BOOK } from "@/components/book/api/POST_BOOK";
 import type { Book } from "@/components/book/types/book";
-import type { GetServerSideProps, NextPage } from "next";
 import { Textarea } from "@/components/common/textarea";
-import { User } from "@/components/user/types/profile";
 import { useMutation } from "@tanstack/react-query";
 import { Input } from "@/components/common/input";
 import React, { useState } from "react";
-import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  redirectTo: "/user/auth",
-  async getServerSideProps(ctx, supabase) {
-    const { data: { session: { user } } } = await supabase.auth.getSession();
-    return { props: { user } }
-  },
-})
+export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
 
-const CreateBooksPage: NextPage = ({ user }: User) => {
+  if (!session)
+    return {
+      redirect: {
+        destination: '/user/auth',
+        permanent: false
+      }
+    };
+
+  return {
+    props: {
+      initialSession: session,
+      user: session.user
+    }
+  };
+};
+
+const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
   const bookMutation = useMutation((book: Book) => POST_BOOK(book));
   const [description, setDescription] = useState<string>("");
   const [name, setName] = useState<string>("");

@@ -1,20 +1,35 @@
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Vocabulary } from "@/components/vocabulary/views/vocabulary";
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSidePropsContext, GetServerSideProps, NextPage } from "next";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
 import { useRouter } from "next/router";
 import FatherLessVocabulary from '@/components/vocabulary/views/fatherless-vocabulary';
-import Link from "next/link";
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  redirectTo: "/user/auth",
-  async getServerSideProps(ctx) {
-    const refererBook = ctx.req.headers.referer ?? null;
-    const refererBookId = refererBook.substring(refererBook.length - 36);
-    return { props: { refererBookId } }
-  },
-})
+export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  if (!session)
+    return {
+      redirect: {
+        destination: '/user/auth',
+        permanent: false
+      }
+    };
+
+  const refererBook = ctx.req.headers.referer;
+
+  return {
+    props: {
+      initialSession: session,
+      user: session.user,
+      refererBookId: refererBook.substring(refererBook.length - 36) ?? null
+    }
+  };
+};
 
 export type Referer = {
   refererBookId: string

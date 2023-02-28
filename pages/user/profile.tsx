@@ -1,19 +1,32 @@
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import type { GetServerSidePropsContext, GetServerSideProps, NextPage } from "next";
 import { ProfileForm } from "@/components/user/views/profile-form";
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { User } from "@/components/user/types/profile";
-import type { GetServerSideProps, NextPage } from "next";
 
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  redirectTo: "/user/auth",
-  async getServerSideProps(ctx, supabase) {
-    const { data: { session: { user } } } = await supabase.auth.getSession();
-    return { props: { user } }
-  },
-})
+export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
 
-const ProfilePage: NextPage = ({ user }: User) => {
-  return <ProfileForm user={user} />
+  if (!session)
+    return {
+      redirect: {
+        destination: '/user/auth',
+        permanent: false
+      }
+    };
+
+  return {
+    props: {
+      initialSession: session,
+      user: session.user,
+    }
+  };
+};
+const ProfilePage: NextPage = ({ user }: { user: User }) => {
+  return <ProfileForm user={user.user} />
 }
 
 export default ProfilePage;
