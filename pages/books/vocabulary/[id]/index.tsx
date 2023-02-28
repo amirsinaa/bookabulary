@@ -1,25 +1,40 @@
+import {
+  createServerSupabaseClient,
+  User
+} from "@supabase/auth-helpers-nextjs";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage
+} from "next";
 import { GET_VOCABULARY } from "@/components/vocabulary/api/GET_VOCABULARY";
 import { QueryClient, useQuery, dehydrate } from "@tanstack/react-query";
 import { Vocabulary } from "@/components/vocabulary/views/vocabulary";
-import type { GetServerSideProps, NextPage } from "next";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
 import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
 import { useRouter } from "next/router";
 
 const queryClient = new QueryClient(REACT_QUERY_DEFAULT_OPTIONS);
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { id } = params;
+export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  const { id } = ctx.params;
   await queryClient.prefetchQuery(["vocabulary", id], () => GET_VOCABULARY(String(id)));
 
   return {
     props: {
+      initialSession: session,
       dehydratedState: dehydrate(queryClient),
-    },
-  }
-}
+      user: session?.user ?? { user: 'not-authed' }
+    }
+  };
+};
 
-const VocabularyPage: NextPage = () => {
+const VocabularyPage: NextPage = ({ user }: { user: User }) => {
   const router = useRouter();
   const { query: { id } } = router;
 
@@ -36,10 +51,12 @@ const VocabularyPage: NextPage = () => {
         <ArrowLeftIcon className="mt-5" width={45} height={45} />
       </Button>
       <Vocabulary
-        bookId={vocabulary.data.book_id}
-        vocabularyId={vocabulary.data.id}
-        title={vocabulary.data.title}
         dictionary={vocabulary.data.dictionary.data}
+        vocabularyOwner={vocabulary.data.profile_id}
+        vocabularyId={vocabulary.data.id}
+        bookId={vocabulary.data.book_id}
+        title={vocabulary.data.title}
+        profileId={user.id}
       />
     </section>
   );

@@ -44,7 +44,13 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title', dictionary = [] }) => {
+export const Vocabulary = ({
+  vocabularyOwner = '',
+  profileId = '',
+  bookId,
+  vocabularyId = null,
+  title = 'Enter a title',
+  dictionary = [] }) => {
   const { colorMode } = useColorMode();
   const [vocabularyTitle, setVocabularyTitle] = React.useState(title);
   const columns = React.useMemo<ColumnDef<DictionaryData>[]>(
@@ -70,6 +76,7 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+  const isOwner: Boolean = vocabularyOwner === profileId ? true : false;
   const [data, setData] = React.useState<DictionaryData[]>(dictionary);
   const [tableCacheFlag, setTableCacheFlag] = React.useState(false);
   const vocabularyMutation = useMutation((vocabulary) => vocabularyId ? UPDATE_VOCABULARY(vocabulary) : CREATE_VOCABULARY(vocabulary));
@@ -84,10 +91,10 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
         }
       }
     } else {
-
       return {
         updates: {
           book_id: bookId,
+          profile_id: profileId,
           title: vocabularyTitle,
           dictionary: { data: data }
         }
@@ -190,7 +197,7 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
           </tbody>
         </table>
 
-        {!table.getCanNextPage() && <div className='border-0 m-0 hover:cursor-pointer flex justify-center bg-lime-50 hover:bg-lime-200 rounded-b-md' onClick={
+        {(!table.getCanNextPage() && isOwner) && <div className='border-0 m-0 hover:cursor-pointer flex justify-center bg-lime-50 hover:bg-lime-200 rounded-b-md' onClick={
           () => {
             // @ts-expect-error
             return setData(old => [...old, {
@@ -203,11 +210,11 @@ export const Vocabulary = ({ bookId, vocabularyId = null, title = 'Enter a title
           <PlusIcon width={34} height={34} className='text-lime-800 font-bold' />
         </div>}
 
-        {vocabularyId && <VocabularyFormControls table={table} />}
+        {table.getCanNextPage() && <VocabularyFormControls table={table} />}
 
         <ReactQueryUiErrorHandler queryKey={vocabularyMutation} />
 
-        {tableCacheFlag && <button className={`mt-4 rounded-sm w-full btn-light text-xl flex gap-2 py-2 justify-center ${!!vocabularyMutation.isLoading ? 'animate-pulse' : ''}`} onClick={() => {
+        {(tableCacheFlag && isOwner) && <button className={`mt-4 rounded-sm w-full btn-light text-xl flex gap-2 py-2 justify-center ${!!vocabularyMutation.isLoading ? 'animate-pulse' : ''}`} onClick={() => {
           //@ts-expect-error
           vocabularyMutation.mutate(vocabularyId === null ? vocabularyMutationMethod('CREATE') : vocabularyMutationMethod('UPDATE'))
         }
