@@ -1,26 +1,41 @@
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
 import { Vocabulary } from "@/components/vocabulary/views/vocabulary";
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSidePropsContext, GetServerSideProps, NextPage } from "next";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
 import { useRouter } from "next/router";
 import FatherLessVocabulary from '@/components/vocabulary/views/fatherless-vocabulary';
-import Link from "next/link";
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  redirectTo: "/user/auth",
-  async getServerSideProps(ctx) {
-    const refererBook = ctx.req.headers.referer ?? null;
-    const refererBookId = refererBook.substring(refererBook.length - 36);
-    return { props: { refererBookId } }
-  },
-})
+export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  if (!session)
+    return {
+      redirect: {
+        destination: '/user/auth',
+        permanent: false
+      }
+    };
+
+  const refererBook = ctx.req.headers.referer;
+
+  return {
+    props: {
+      initialSession: session,
+      user: session.user,
+      refererBookId: refererBook.substring(refererBook.length - 36) ?? null
+    }
+  };
+};
 
 export type Referer = {
   refererBookId: string
 }
 
-const CreateVocabularyPage: NextPage = ({ refererBookId }: Referer) => {
+const CreateVocabularyPage: NextPage = (refererBookId: Referer, { user }: { user: User }) => {
   const router = useRouter();
   { }
   return (
@@ -32,7 +47,13 @@ const CreateVocabularyPage: NextPage = ({ refererBookId }: Referer) => {
         >
           <ArrowLeftIcon className="mt-5" width={45} height={45} />
         </Button>
-        <Vocabulary bookId={refererBookId} dictionary={[]} /></>}
+        <Vocabulary
+          profileId={user.id}
+          vocabularyOwner={user.id}
+          bookId={refererBookId}
+          dictionary={[]}
+        />
+      </>}
     </section >
   );
 };
