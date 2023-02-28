@@ -10,12 +10,13 @@ import type { GetServerSideProps, NextPage } from "next";
 import { GET_BOOK } from "@/components/book/api/GET_BOOK";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
+import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
 import { Book } from "@/components/book/views/book";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient(REACT_QUERY_DEFAULT_OPTIONS);
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { id } = params;
   await queryClient.prefetchQuery(["book", id], () => GET_BOOK(String(id)));
@@ -62,14 +63,7 @@ const BooksPage: NextPage = () => {
               </Link>
             </Button>
           </div> : vocabularies?.data?.map(vocabulary => {
-            return (
-              <Link
-                key={vocabulary.id}
-                href={{ pathname: "/books/vocabulary/[id]", query: { id: vocabulary.id } }}
-                className="hover:cursor-pointer">
-                <VocabularyCard data={vocabulary} />
-              </Link>
-            )
+            return <VocabularyCard data={vocabulary} />
           })}
         </section>
         {vocabularies.data.length !== 0 && <div className="flex justify-center items-center text-center">

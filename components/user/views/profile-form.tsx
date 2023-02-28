@@ -1,10 +1,9 @@
 import { useProfile } from "@/components/user/hooks/use-profile";
-import { User } from "@/components/user/types/profile";
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/common/input";
 import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 
-export function ProfileForm({ user }: User) {
+export function ProfileForm({ user }) {
   const [username, setUsername] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
   const [{ profile }, { update }] = useProfile(user.id);

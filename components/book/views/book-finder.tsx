@@ -13,7 +13,7 @@ export const BookFinder = () => {
 
   return (
     <section className="flex flex-col flex-wrap justify-center">
-      <h3 className="py-10 text-4xl font-bold text-center text-teal-800 dark:text-white">Find a book you&quot;re reading</h3>
+      <h3 className="py-10 text-4xl font-bold text-center text-teal-800 dark:text-white">Find a book you are reading</h3>
       <div className="relative">
         {(books.fetchStatus !== "idle" && books.isLoading) && <LoadingSpinner color="text-teal-800" className="absolute right-0 w-10 h-full flex-col justify-center" />}
         <Input type="text" name="bookName" aria-placeholder="Enter a book name" placeholder="Enter a book name" value={bookName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBookName(e.target.value)} />
@@ -25,7 +25,7 @@ export const BookFinder = () => {
           )
         })}
       </div>
-      <p className="flex flex-row items-center m-auto f-full">Didn&quot;t find the book you are looking for or you want to submit yours? <Button extraConfig="btn"><Link href="/books/create" className="hover:cursor-pointer">Create yours</Link></Button></p>
+      <p className="flex flex-row items-center m-auto f-full">Did not find the book you are looking for or you want to submit yours? <Button extraConfig="btn"><Link href="/books/create" className="hover:cursor-pointer">Create yours</Link></Button></p>
     </section>
   );
 }
