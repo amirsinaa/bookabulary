@@ -63,7 +63,7 @@ const BooksPage: NextPage = () => {
               </Link>
             </Button>
           </div> : vocabularies?.data?.map(vocabulary => {
-            return <VocabularyCard data={vocabulary} />
+            return <VocabularyCard key={vocabulary.id} data={vocabulary} />
           })}
         </section>
         {vocabularies.data.length !== 0 && <div className="flex justify-center items-center text-center">
