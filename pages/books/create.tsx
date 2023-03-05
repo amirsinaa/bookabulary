@@ -16,7 +16,8 @@ import { Button } from "@/components/common/button";
 import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
 import { Input } from "@/components/common/input";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from 'react-toastify';
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const supabase = createServerSupabaseClient(ctx);
@@ -45,12 +46,23 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
   const [description, setDescription] = useState<string>("");
   const [name, setName] = useState<string>("");
   const router = useRouter();
+  const notifySuccessfulPost = () => toast('Data has been updated successfully!');
+  const notifyUnSuccessfulPost = () => toast('There was an issue with updating your data!!');
+  useEffect(() => {
+    if (bookMutation.isSuccess && bookMutation.data.error === null) {
+      notifySuccessfulPost();
+      router.replace('/user/archive');
+    } else if (bookMutation.isSuccess && bookMutation.data.error) {
+      notifyUnSuccessfulPost();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookMutation.isSuccess]);
 
   return (
     <section className="edit-book-page">
       <Button
         onClick={() => router.back()}
-        extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
+        classOverrides="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
       >
         <ArrowLeftIcon className="mt-5" width={45} height={45} />
       </Button>
@@ -91,11 +103,23 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
         <ReactQueryUiErrorHandler queryKey={bookMutation} />
         <div>
           <button
-            className="w-full btn"
+            disabled={bookMutation.isLoading ? true : false}
+            className="w-full btn disabled:bg-gray-300 disabled:cursor-not-allowed"
             type="submit"
           >
             Create
           </button>
+          <ToastContainer
+            position='top-center'
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </div>
       </form>
     </section>

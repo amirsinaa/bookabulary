@@ -1,16 +1,39 @@
+
+import { DELETE_BOOK } from '@/components/book/api/DELETE_BOOK'
+import { useColorMode } from '@/context/color-mode.context';
 import ClientOnlyPortal from "@/utils/client-only-portals";
+import type { Book } from "@/components/book/types/book";
+import { ToastContainer, toast } from 'react-toastify';
+import { useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/common/button";
 import { Input } from "@/components/common/input";
 import { ExitIcon } from '@radix-ui/react-icons';
 import { Tag } from '@/components/common/tag';
-import { Button } from "@/components/common/button";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const DeleteBook = ({ book }) => {
+  const router = useRouter();
+  const { colorMode } = useColorMode();
   const [deleteWarning, setDeleteWarning] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<string>('');
+  const bookDeleteMutation = useMutation((book: Book) => DELETE_BOOK(book.id));
+  const notifySuccessfulPost = () => toast('Data has been updated successfully!');
+  const notifyUnSuccessfulPost = () => toast('There was an issue with creating your book!!');
+  useEffect(() => {
+    if (bookDeleteMutation.isSuccess && bookDeleteMutation.data.error === null) {
+      notifySuccessfulPost();
+      setDeleteWarning(false);
+      router.reload();
+    } else if (bookDeleteMutation.isSuccess && bookDeleteMutation.data.error) {
+      notifyUnSuccessfulPost();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookDeleteMutation.isSuccess]);
+
   return (
     <>
-      <Button onClick={() => setDeleteWarning(true)} extraConfig='rounded-sm p-2 bg-red-600 text-white hover:cursor-pointer px-2'>
+      <Button onClick={() => setDeleteWarning(true)} classOverrides='rounded-lg p-2 bg-red-700 text-white hover:cursor-pointer px-2 mx-1'>
         Delete
       </Button>
       {deleteWarning &&
@@ -33,7 +56,24 @@ const DeleteBook = ({ book }) => {
                 </p>
               </div>
               <div className="flex justify-between items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-                <button disabled={confirmDelete === book.name ? false : true} type="button" className="disabled:bg-gray-300 disabled:cursor-not-allowed text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Delete</button>
+
+                <button disabled={confirmDelete === book.name ? false : true} type="button" className="disabled:bg-gray-300 disabled:cursor-not-allowed text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onClick={() => bookDeleteMutation.mutate({
+                  id: book.id,
+                  name: null,
+                  description: null
+                })}>Delete</button>
+                <ToastContainer
+                  position='top-center'
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme={colorMode === 'light' ? 'light' : 'dark'}
+                />
                 <button onClick={(prev) => setDeleteWarning(!prev)} type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Cancel</button>
               </div>
             </div>
