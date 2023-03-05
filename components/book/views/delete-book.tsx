@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/common/button";
 import { Input } from "@/components/common/input";
-import { ExitIcon } from '@radix-ui/react-icons';
+import { Cross1Icon } from '@radix-ui/react-icons';
 import { Tag } from '@/components/common/tag';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -44,7 +44,7 @@ const DeleteBook = ({ book }) => {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Deleting <Tag color='text-red-700' background='bg-red-200'>{book.name}</Tag>
                 </h3>
-                <ExitIcon width={34} height={34} onClick={(prev) => setDeleteWarning(!prev)} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" />
+                <Cross1Icon width={34} height={34} onClick={(prev) => setDeleteWarning(!prev)} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" />
               </div>
               <div className="p-6 space-y-6">
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
