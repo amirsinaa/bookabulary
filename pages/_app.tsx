@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ColorModeProvider } from '@/context/color-mode.context'
 import { PageProps, ExtendedAppProps } from '@/types/next';
 import { Layout } from '@/components/skeleton/layout';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react'
 import '@/styles/globals.css';
 

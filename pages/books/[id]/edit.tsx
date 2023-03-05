@@ -8,17 +8,24 @@ import type {
   GetServerSidePropsContext,
   NextPage
 } from "next";
-import { POST_BOOK } from "@/components/book/api/POST_BOOK";
-import type { Book } from "@/components/book/types/book";
-import { Textarea } from "@/components/common/textarea";
+import { QueryClient, useQuery, dehydrate } from "@tanstack/react-query";
+import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
+import { GET_BOOK } from '@/components/book/api/GET_BOOK';
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
-import { useRouter } from "next/router";
-import { useMutation } from "@tanstack/react-query";
-import { Input } from "@/components/common/input";
-import React, { useState, useEffect } from "react";
+import { RocketIcon, MagicWandIcon } from '@radix-ui/react-icons';
+import { useColorMode } from '@/context/color-mode.context';
 import { ToastContainer, toast } from 'react-toastify';
+import { UPDATE_BOOK } from "@/components/book/api/UPDATE_BOOK";
+import { useRouter } from "next/router";
+import type { Book } from "@/components/book/types/book";
+import { Textarea } from "@/components/common/textarea";
+import { useMutation } from "@tanstack/react-query";
+import { Tag } from '@/components/common/tag';
+import { Input } from "@/components/common/input";
+import { useState, useEffect } from "react";
 
+const queryClient = new QueryClient(REACT_QUERY_DEFAULT_OPTIONS);
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const supabase = createServerSupabaseClient(ctx);
   const {
@@ -33,30 +40,40 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
       }
     };
 
+  const { id } = ctx.params;
+  await queryClient.prefetchQuery(["edit-book", id], () => GET_BOOK(String(id)));
+
   return {
     props: {
       initialSession: session,
+      dehydratedState: dehydrate(queryClient),
       user: session.user
     }
   };
 };
 
-const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
-  const bookMutation = useMutation((book: Book) => POST_BOOK(book));
-  const [description, setDescription] = useState<string>("");
-  const [name, setName] = useState<string>("");
+const EditBooksPage: NextPage = ({ user }: { user: User }) => {
   const router = useRouter();
+  const { colorMode } = useColorMode();
+  const { query: { id } } = router;
+  const { isLoading: loading, data: book, error } = useQuery(["edit-book", id], () => GET_BOOK(String(id)));
+  { error && <p>error</p> }
+  const bookUpdateMutation = useMutation((book: Book) => UPDATE_BOOK(id, book));
+  const [description, setDescription] = useState<string>(() => book.data.description);
+  const [name, setName] = useState<string>(() => book.data.name);
   const notifySuccessfulPost = () => toast('Data has been updated successfully!');
   const notifyUnSuccessfulPost = () => toast('There was an issue with updating your data!!');
+
   useEffect(() => {
-    if (bookMutation.isSuccess && bookMutation.data.error === null) {
+    if (bookUpdateMutation.isSuccess && bookUpdateMutation.data.error === null) {
       notifySuccessfulPost();
-      router.replace('/user/archive');
-    } else if (bookMutation.isSuccess && bookMutation.data.error) {
+    } else if (bookUpdateMutation.isSuccess && bookUpdateMutation.data.error) {
       notifyUnSuccessfulPost();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookMutation.isSuccess]);
+  }, [bookUpdateMutation.isSuccess]);
+
+
 
   return (
     <section className="edit-book-page">
@@ -66,16 +83,16 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
       >
         <ArrowLeftIcon className="mt-5" width={45} height={45} />
       </Button>
-
       <form className={`flex flex-col space-y-4`} onSubmit={(e) => {
         e.preventDefault();
-        return bookMutation.mutate({
-          name: name,
+        return bookUpdateMutation.mutate({
           description: description,
+          id: book.data.id,
           profile_id: user.id,
+          name: name,
         })
       }}>
-        <h1 className="text-4xl font-semibold">Create a book</h1>
+        <h1 className="text-3xl mt-2 text-center font-semibold">You are editing <Tag color='text-white' background='bg-lime-700'>{name}</Tag></h1>
         <div className="form-group">
           <label className="text-md" htmlFor="name">Book name:</label>
           <Input
@@ -83,6 +100,8 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
             name="name"
             id="name"
             placeholder="Enter the title of the book"
+            value={name}
+            isLoading={loading}
             aria-placeholder="Enter the title of the book"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           />
@@ -93,6 +112,8 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
             type="text"
             maxLength="200"
             id="description"
+            value={description}
+            isLoading={loading}
             name="description"
             placeholder="Enter is this book about ?"
             aria-placeholder="Enter is this book about ?"
@@ -100,14 +121,16 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
           />
           <span className="absolute bottom-0 right-0 p-4">{description.length}/200</span>
         </div>
-        <ReactQueryUiErrorHandler queryKey={bookMutation} />
+        <ReactQueryUiErrorHandler queryKey={bookUpdateMutation} />
         <div>
           <button
-            disabled={bookMutation.isLoading ? true : false}
-            className="w-full btn disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className={`mt-4 rounded-sm w-full btn text-xl flex gap-2 py-2 justify-center ${!!bookUpdateMutation.isLoading ? 'animate-pulse' : ''}`}
             type="submit"
           >
-            Create
+            {!!bookUpdateMutation.isLoading ? <>
+              Saving ... <RocketIcon className='animate-bounce' width={34} height={34} />
+            </>
+              : <>Save <MagicWandIcon width={34} height={34} /></>}
           </button>
           <ToastContainer
             position='top-center'
@@ -119,6 +142,7 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
+            theme={colorMode === 'light' ? 'light' : 'dark'}
           />
         </div>
       </form>
@@ -126,4 +150,4 @@ const CreateBooksPage: NextPage = ({ user }: { user: User }) => {
   );
 };
 
-export default CreateBooksPage;
+export default EditBooksPage;

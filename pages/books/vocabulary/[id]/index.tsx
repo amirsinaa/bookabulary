@@ -46,7 +46,7 @@ const VocabularyPage: NextPage = ({ user }: { user: User }) => {
     <section className="vocabulary-page">
       <Button
         onClick={() => router.back()}
-        extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
+        classOverrides="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
       >
         <ArrowLeftIcon className="mt-5" width={45} height={45} />
       </Button>

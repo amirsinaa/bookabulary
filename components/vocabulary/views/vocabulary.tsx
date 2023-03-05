@@ -26,7 +26,6 @@ import ReactQueryUiErrorHandler from '@/components/common/react-query-ui-error';
 import VocabularyTableTitle from './vocabulary-table-title';
 import VocabularyTableColumnsTitle from './vocabulary-table-columns-title';
 import VocabularyFormControls from '../views/vocabulary-table-controls'
-import 'react-toastify/dist/ReactToastify.css';
 import type { DictionaryData } from '../types/vocabulary';
 
 import {

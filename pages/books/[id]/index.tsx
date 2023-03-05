@@ -41,7 +41,7 @@ const BooksPage: NextPage = () => {
   { isLoading ? "Loading ..." : "" }
   return (
     <section className="book-page">
-      <Button onClick={() => router.back()} extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"><ArrowLeftIcon className="mt-5" width={45} height={45} /></Button>
+      <Button onClick={() => router.back()} classOverrides="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"><ArrowLeftIcon className="mt-5" width={45} height={45} /></Button>
       <Book book={book}>
         {vocabulariesIsLoading && <LoadingContentSkeleton format={4} />}
         {vocabulariesError instanceof Error && <p>{vocabulariesError.message}</p>}
@@ -54,7 +54,7 @@ const BooksPage: NextPage = () => {
               No vocabulary yet!
             </h5>
             <Button
-              extraConfig='btn'
+              classOverrides='btn'
             >
               <Link
                 href="/books/vocabulary/create" className='hover:cursor-pointer'
@@ -68,7 +68,7 @@ const BooksPage: NextPage = () => {
         </section>
         {vocabularies.data.length !== 0 && <div className="flex justify-center items-center text-center">
           <Button
-            extraConfig='btn'
+            classOverrides='btn'
           >
             <Link
               href="/books/vocabulary/create" className='hover:cursor-pointer'
