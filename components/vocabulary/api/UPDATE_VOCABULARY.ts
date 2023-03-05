@@ -1,4 +1,3 @@
-import type { definitions } from "@/types/supabase-open-api";
 import { supabase } from "@/api/supabase-client";
 
 export const UPDATE_VOCABULARY = async (vocabulary) => {

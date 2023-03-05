@@ -19,31 +19,29 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
         permanent: false
       }
     };
-
   const refererBook = ctx.req.headers.referer;
 
   return {
     props: {
       initialSession: session,
       user: session.user,
-      refererBookId: refererBook.substring(refererBook.length - 36) ?? null
+      refererBookId: refererBook !== undefined ? refererBook.substring(refererBook.length - 36) : null
     }
   };
 };
 
 export type Referer = {
-  refererBookId: string
+  refererBookId: string | undefined | null
 }
 
-const CreateVocabularyPage: NextPage = (refererBookId: Referer, { user }: { user: User }) => {
+const CreateVocabularyPage: NextPage = ({ refererBookId, user }: { refererBookId: Referer, user: User }) => {
   const router = useRouter();
-  { }
   return (
     <section className="vocabulary-page">
-      {!refererBookId ? <FatherLessVocabulary /> : <>
+      {refererBookId === null || undefined ? <FatherLessVocabulary /> : <>
         <Button
           onClick={() => router.back()}
-          extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
+          classOverrides="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
         >
           <ArrowLeftIcon className="mt-5" width={45} height={45} />
         </Button>
