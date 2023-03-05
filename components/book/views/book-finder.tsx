@@ -25,7 +25,7 @@ export const BookFinder = () => {
           )
         })}
       </div>
-      <p className="flex flex-row items-center m-auto f-full">Did not find the book you are looking for or you want to submit yours? <Button extraConfig="btn"><Link href="/books/create" className="hover:cursor-pointer">Create yours</Link></Button></p>
+      <p className="flex flex-row items-center m-auto f-full">Did not find the book you are looking for or you want to submit yours? <Button classOverrides="btn"><Link href="/books/create" className="hover:cursor-pointer">Create yours</Link></Button></p>
     </section>
   );
 }
