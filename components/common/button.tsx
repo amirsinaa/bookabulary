@@ -1,6 +1,6 @@
-export const Button = ({ children, extraConfig = null, ...props }) => {
+export const Button = ({ children, classOverrides = null, ...props }) => {
   return (
-    <button className={`mx-2 rounded-md ${!!extraConfig ? extraConfig : ''}`} {...props}>
+    <button className={`${!!classOverrides ? classOverrides : 'mx-2 rounded-md'}`} {...props}>
       {children}
     </button>
   );
