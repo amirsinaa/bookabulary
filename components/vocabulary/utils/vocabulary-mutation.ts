@@ -1,11 +1,12 @@
 export const vocabularyMutationMethod = (method: 'UPDATE' | 'CREATE', data) => {
-  const { vocabularyId, profileId, bookId, title, dictionary } = data;
+  const { vocabularyId, profileId, bookId, isPrivate, title, dictionary } = data;
 
   if (method === 'UPDATE') {
     return {
       vocabularyId: vocabularyId,
       bookId: bookId,
       updates: {
+        is_private: isPrivate,
         title: title,
         dictionary: { data: dictionary }
       }
@@ -15,6 +16,7 @@ export const vocabularyMutationMethod = (method: 'UPDATE' | 'CREATE', data) => {
       updates: {
         book_id: bookId,
         profile_id: profileId,
+        is_private: isPrivate,
         title: title,
         dictionary: { data: dictionary }
       }
