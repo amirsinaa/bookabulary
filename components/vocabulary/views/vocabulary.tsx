@@ -1,4 +1,4 @@
-import React from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import {
   RowData,
   ColumnDef,
@@ -20,6 +20,7 @@ import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 import ReactTableColumnSkeleton from "../views/react-table-column-skeleton"
 import VocabularyTableColumnsTitle from "./vocabulary-table-columns-title";
 import VocabularyFormControls from "../views/vocabulary-table-controls"
+import { ToggleCheckbox } from "@/components/common/toggle-checkbox";
 import { useColorMode } from "@/context/color-mode.context";
 import VocabularyTableTitle from "./vocabulary-table-title";
 import type { DictionaryData } from "../types/vocabulary";
@@ -43,15 +44,17 @@ export const Vocabulary = ({
   title = "Enter a title",
   vocabularyOwner = "",
   vocabularyId = null,
+  isPrivate = false,
   dictionary = [],
   profileId = "",
   bookId,
 }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const [vocabularyTitle, setVocabularyTitle] = React.useState(title);
-  const [data, setData] = React.useState<DictionaryData[]>(dictionary);
-  const columns = React.useMemo<ColumnDef<DictionaryData>[]>(
+  const [vocabularyTitle, setVocabularyTitle] = useState(title);
+  const [data, setData] = useState<DictionaryData[]>(dictionary);
+  const [privateAccess, setPrivateAccess] = useState(() => isPrivate)
+  const columns = useMemo<ColumnDef<DictionaryData>[]>(
     () => [
       {
         header: vocabularyTitle,
@@ -73,16 +76,16 @@ export const Vocabulary = ({
     ],
     [data]
   );
-  const [tableCacheFlag, setTableCacheFlag] = React.useState(false);
+  const [tableCacheFlag, setTableCacheFlag] = useState(false);
   const vocabularyMutation = useMutation((vocabulary) => vocabularyId ? UPDATE_VOCABULARY(vocabulary) : CREATE_VOCABULARY(vocabulary));
 
   const notifySuccessfulPost = () => toast("Data has been updated successfully!");
   const notifyUnSuccessfulPost = () => toast("There was an issue with updating your data!!");
 
-  const initialRender = React.useRef(true);
+  const initialRender = useRef(true);
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false
     } else {
@@ -91,7 +94,7 @@ export const Vocabulary = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, vocabularyTitle, tableCacheFlag]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (vocabularyMutation.isSuccess && vocabularyMutation.data.error === null) {
       notifySuccessfulPost();
       router.push(`/books/${bookId}`)
@@ -119,7 +122,9 @@ export const Vocabulary = ({
   })
 
   return (
-    <article>
+
+    <article className="vocabulary-table">
+      <ToggleCheckbox title="Private" checked={privateAccess} onChange={() => setPrivateAccess(!privateAccess)} />
       <div>
         <table className="w-full p-0">
           <thead>
@@ -147,6 +152,7 @@ export const Vocabulary = ({
         {(tableCacheFlag && table.options.meta?.tableOwner()) && <VocabularySave mutation={vocabularyMutation} data={
           {
             vocabularyId: vocabularyId,
+            isPrivate: privateAccess,
             title: vocabularyTitle,
             profileId: profileId,
             dictionary: data,
