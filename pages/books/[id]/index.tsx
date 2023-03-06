@@ -44,8 +44,9 @@ const BooksPage: NextPage = ({ user }: { user: User }) => {
   const router = useRouter();
   const { query: { id } } = router;
   const { isLoading, data: book, error } = useQuery(["book", id], () => GET_BOOK(String(id)));
+  const isOwner = user.id === book.data.profile_id;
 
-  const { isLoading: vocabulariesIsLoading, data: vocabularies, error: vocabulariesError } = useQuery(["book-vocabularies", id], () => user.id === book.data.profile_id ? GET_BOOK_ALL_VOCABULARIES(String(id)) : GET_BOOK_PUBLIC_VOCABULARIES(String(id)));
+  const { isLoading: vocabulariesIsLoading, data: vocabularies, error: vocabulariesError } = useQuery(["book-vocabularies", id], () => isOwner ? GET_BOOK_ALL_VOCABULARIES(String(id)) : GET_BOOK_PUBLIC_VOCABULARIES(String(id)));
 
   if (error instanceof Error) return <ReactQueryUiErrorHandler queryKey={book} />;
   { isLoading ? "Loading ..." : "" }
@@ -76,7 +77,7 @@ const BooksPage: NextPage = ({ user }: { user: User }) => {
             return <VocabularyCard key={vocabulary.id} data={vocabulary} />
           })}
         </section>
-        {vocabularies.data.length !== 0 && <div className="flex justify-center items-center text-center">
+        {(vocabularies.data.length !== 0 && isOwner) && <div className="flex justify-center items-center text-center">
           <Button
             classOverrides='btn'
           >
