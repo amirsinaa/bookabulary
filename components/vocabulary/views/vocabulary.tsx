@@ -92,7 +92,7 @@ export const Vocabulary = ({
       setTableCacheFlag(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, vocabularyTitle, tableCacheFlag]);
+  }, [data, vocabularyTitle, tableCacheFlag, privateAccess]);
 
   useEffect(() => {
     if (vocabularyMutation.isSuccess && vocabularyMutation.data.error === null) {
