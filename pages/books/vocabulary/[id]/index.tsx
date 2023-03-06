@@ -53,6 +53,7 @@ const VocabularyPage: NextPage = ({ user }: { user: User }) => {
       <Vocabulary
         dictionary={vocabulary.data.dictionary.data}
         vocabularyOwner={vocabulary.data.profile_id}
+        isPrivate={vocabulary.data.is_private}
         vocabularyId={vocabulary.data.id}
         bookId={vocabulary.data.book_id}
         title={vocabulary.data.title}
