@@ -7,4 +7,9 @@ const REACT_QUERY_DEFAULT_OPTIONS = {
   },
 }
 
+export const REACT_QUERY_VOCABULARY_TABLE_CACHE = {
+  staleTime: 0,
+  cacheTime: 0,
+}
+
 export default REACT_QUERY_DEFAULT_OPTIONS;

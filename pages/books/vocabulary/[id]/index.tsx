@@ -12,7 +12,7 @@ import { QueryClient, useQuery, dehydrate } from "@tanstack/react-query";
 import { Vocabulary } from "@/components/vocabulary/views/vocabulary";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
-import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
+import REACT_QUERY_DEFAULT_OPTIONS, { REACT_QUERY_VOCABULARY_TABLE_CACHE } from "@/constant/react-query-options";
 import { useRouter } from "next/router";
 
 const queryClient = new QueryClient(REACT_QUERY_DEFAULT_OPTIONS);
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   } = await supabase.auth.getSession();
 
   const { id } = ctx.params;
-  await queryClient.prefetchQuery(["vocabulary", id], () => GET_VOCABULARY(String(id)));
+  await queryClient.prefetchQuery(["vocabulary", id], () => GET_VOCABULARY(String(id)), REACT_QUERY_VOCABULARY_TABLE_CACHE);
 
   return {
     props: {
@@ -38,7 +38,7 @@ const VocabularyPage: NextPage = ({ user }: { user: User }) => {
   const router = useRouter();
   const { query: { id } } = router;
 
-  const { isLoading, data: vocabulary, error } = useQuery(["vocabulary", id], () => GET_VOCABULARY(String(id)));
+  const { isLoading, data: vocabulary, error } = useQuery(["vocabulary", id], () => GET_VOCABULARY(String(id)), REACT_QUERY_VOCABULARY_TABLE_CACHE);
   { error && <p>error</p> }
   { isLoading ? "Loading ..." : "" }
 
@@ -46,13 +46,14 @@ const VocabularyPage: NextPage = ({ user }: { user: User }) => {
     <section className="vocabulary-page">
       <Button
         onClick={() => router.back()}
-        extraConfig="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
+        classOverrides="ease-in-out duration-150 hover:drop-shadow-xl hover:scale-110"
       >
         <ArrowLeftIcon className="mt-5" width={45} height={45} />
       </Button>
       <Vocabulary
         dictionary={vocabulary.data.dictionary.data}
         vocabularyOwner={vocabulary.data.profile_id}
+        isPrivate={vocabulary.data.is_private}
         vocabularyId={vocabulary.data.id}
         bookId={vocabulary.data.book_id}
         title={vocabulary.data.title}

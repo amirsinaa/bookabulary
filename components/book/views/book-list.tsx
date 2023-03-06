@@ -14,14 +14,11 @@ export function BookList({ user }) {
   if (books.error instanceof Error) return <ReactQueryUiErrorHandler queryKey={books} />;
 
   return (
-    <section className='flex flex-col flex-wrap justify-center p-0 my-2'>
-      <h4 className='pb-3 text-4xl font-bold text-center text-teal-800'>Your books</h4>
-      <ul className='flex flex-row flex-wrap justify-center book-search-result'>
-        {books.isLoading && <LoadingContentSkeleton format={2} />}
-        {books.data?.data.map(
-          book => <BookListItem key={book.id} book={book} />
-        )}
-      </ul>
-    </section>
+    <ul className='flex flex-row flex-wrap justify-center w-full book-search-result'>
+      {books.isLoading && <LoadingContentSkeleton format={2} />}
+      {books.data?.data.map(
+        book => <BookListItem key={book.id} book={book} />
+      )}
+    </ul>
   );
 }

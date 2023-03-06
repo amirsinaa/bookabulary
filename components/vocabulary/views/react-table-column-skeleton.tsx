@@ -23,6 +23,7 @@ const ReactTableColumnSkeleton: Partial<ColumnDef<DictionaryData>> = {
         value={value as string}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
         onBlur={onBlur}
+        disabled={table.options.meta?.tableOwner() ? false : true}
         placeholder='Type something ...'
       />
     )

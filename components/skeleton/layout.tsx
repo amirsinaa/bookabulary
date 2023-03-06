@@ -18,7 +18,7 @@ export function Layout({ children }: PropsWithChildren) {
           <Header />
           <main className="max-w-screen-xl p-2 m-auto h-full min-h-screen relative">
             {children}
-            <Button onClick={() => setColorMode(colorMode === 'light' ? 'dark' : 'light')} extraConfig='ease-in-out duration-150 hover:drop-shadow-xl fixed bottom-10 left-10 rounded-full border-lime-100 bg-lime-200 drop-shadow-xl p-4 dark:text-black'>{colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}</Button>
+            <Button onClick={() => setColorMode(colorMode === 'light' ? 'dark' : 'light')} classOverrides='ease-in-out duration-150 hover:drop-shadow-xl fixed bottom-10 left-10 rounded-full border-lime-100 bg-lime-200 drop-shadow-xl p-4 dark:text-black'>{colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}</Button>
           </main>
           <Footer />
         </div>
