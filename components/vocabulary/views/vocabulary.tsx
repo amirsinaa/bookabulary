@@ -124,7 +124,7 @@ export const Vocabulary = ({
   return (
 
     <article className="vocabulary-table">
-      <ToggleCheckbox title="Private" checked={privateAccess} onChange={() => setPrivateAccess(!privateAccess)} />
+      {table.options.meta?.tableOwner() && <ToggleCheckbox title="Private" checked={privateAccess} onChange={() => setPrivateAccess(!privateAccess)} />}
       <div>
         <table className="w-full p-0">
           <thead>
