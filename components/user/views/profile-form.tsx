@@ -28,7 +28,7 @@ export function ProfileForm({ user }) {
       }>
       <div className="form-group">
         <label className="label" htmlFor="username">
-          Name
+          Firstname
         </label>
         <Input
           disabled={loading}
@@ -42,7 +42,7 @@ export function ProfileForm({ user }) {
       </div>
       <div className="form-group">
         <label className="label" htmlFor="website">
-          Website
+          Lastname
         </label>
         <Input
           disabled={loading}
