@@ -64,3 +64,8 @@ tfoot th {
 .prose p {
   @apply mb-2;
 }
+
+.divider:before,.divider:after {
+  @apply bg-lime-300;
+  opacity: 1;
+}
