@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
 const Archive: NextPage = ({ user }: { user: User }) => {
   return (
     <section className="book-archive-page">
-      <h4 className='my-4 text-4xl font-bold text-center text-teal-800'>Your books</h4>
+      <h4 className='my-4 text-4xl font-bold text-center text-teal-800 dark:text-white'>Your books</h4>
       <div className="book-archive-page flex flex-row flex-wrap justify-center p-2 my-8 md:p-12 md:my-4 rounded-xl bg-lime-100 drop-shadow-xl">
         <BookList user={user} />
       </div>
