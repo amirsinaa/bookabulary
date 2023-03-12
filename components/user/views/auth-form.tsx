@@ -1,6 +1,7 @@
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { Button } from "@/components/common/button";
 import { Input } from "@/components/common/input";
+import { Tag } from '@/components/common/tag';
 import { useState } from 'react';
 
 export function SigninForm() {
@@ -23,51 +24,49 @@ export function SigninForm() {
   }
 
   return (
-    <div>
-      {emailSent ? (
-        <div className="prose">
-          <p>An e-mail has been sent to your e-mail address.</p>
-          <p>Please click the link in this mail to sign in.</p>
-          <p>
-            <Button className="btn-link" onClick={() => setEmailSent(false)}>
-              Retry
-            </Button>
-          </p>
-        </div>
-      ) : (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            handleLogin(email)
-          }}
-          className="flex flex-col items-center space-y-4"
-        >
-          <p>
-            To sign in or create an account, please enter your email address.
-            You will receive a magic link in your mailbox.
-          </p>
-          <div className="w-full form-group">
-            <label className="label" htmlFor="email">
-              E-mail address
-            </label>
+    <div className="hero">
+      <div className="hero-content flex-col lg:flex-row-reverse">
+        {emailSent ? (
+          <div className="text-center lg:text-left">
+            <h1 className="py-2 text-5xl font-bold">Almost done !</h1>
+            <p>An e-mail has been sent to <Tag>{email}</Tag> address.</p>
+            <p>Please click the link in this mail to sign in.</p>
+          </div>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleLogin(email)
+            }}
+            className="flex flex-col items-center space-y-4"
+          >
+            <p>
+              To sign in or create an account, please enter your email address.
+              You will receive a magic link in your mailbox.
+            </p>
+            <div className="w-full form-group">
+              <label className="label" htmlFor="email">
+                E-mail address
+              </label>
 
-            <Input
-              id="email"
-              type="email"
-              placeholder="Your email"
-              value={email}
-              required
-              disabled={loading}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="w-full">
-            <Button type="submit" className="w-full btn" disabled={loading}>
-              <span>{loading ? 'Processing…' : 'Send my magic link'}</span>
-            </Button>
-          </div>
-        </form>
-      )}
+              <Input
+                id="email"
+                type="email"
+                placeholder="Your email"
+                value={email}
+                required
+                disabled={loading}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="w-full">
+              <Button type="submit" className="w-full btn" disabled={loading}>
+                <span>{loading ? 'Processing…' : 'Send my magic link'}</span>
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   )
 }

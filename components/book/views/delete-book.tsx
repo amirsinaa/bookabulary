@@ -1,5 +1,6 @@
 
 import { DELETE_BOOK } from '@/components/book/api/DELETE_BOOK'
+import { Cross1Icon, TrashIcon } from '@radix-ui/react-icons';
 import { useColorMode } from '@/context/color-mode.context';
 import ClientOnlyPortal from "@/utils/client-only-portals";
 import type { Book } from "@/components/book/types/book";
@@ -7,7 +8,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/common/button";
 import { Input } from "@/components/common/input";
-import { Cross1Icon } from '@radix-ui/react-icons';
 import { Tag } from '@/components/common/tag';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -33,8 +33,8 @@ const DeleteBook = ({ book }) => {
 
   return (
     <>
-      <Button onClick={() => setDeleteWarning(true)} classOverrides='rounded-lg p-2 bg-red-700 text-white hover:cursor-pointer px-2 mx-1'>
-        Delete
+      <Button onClick={() => setDeleteWarning(true)} classOverrides='rounded-lg p-2 bg-red-700 dark:bg-red-500 text-white hover:cursor-pointer px-2 mx-1'>
+        <TrashIcon width={20} height={20} />
       </Button>
       {deleteWarning &&
         <ClientOnlyPortal selector="#portal">

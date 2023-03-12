@@ -6,7 +6,7 @@ export const VocabularyCard = ({ data, ...props }) => {
   const date = new Date(updated_at)?.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
-    <div className="flex flex-col justify-center p-4 m-2 bg-white dark:bg-lime-700 rounded-lg md:p-10 md:w-5/12 min-h-24 drop-shadow-md grow" {...props}>
+    <div className="flex flex-col justify-center p-4 m-2 bg-white dark:bg-gray-600 rounded-lg md:p-10 md:w-5/12 min-h-24 drop-shadow-md grow" {...props}>
       <Link
         key={data?.id}
         href={{ pathname: "/books/vocabulary/[id]", query: { id: data?.id } }}
