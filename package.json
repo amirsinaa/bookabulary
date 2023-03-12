@@ -6,7 +6,7 @@
 		"type": "git",
 		"url": "https://github.com/amirsinaa/bookabulary"
 	},
-	"version": "0.3.4",
+	"version": "0.3.5",
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
@@ -32,6 +32,7 @@
 		]
 	},
 	"dependencies": {
+		"@headlessui/react": "^1.7.13",
 		"@radix-ui/react-icons": "^1.2.0",
 		"@supabase/auth-helpers-nextjs": "^0.5.5",
 		"@supabase/auth-helpers-react": "^0.3.1",
