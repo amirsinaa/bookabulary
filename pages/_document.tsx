@@ -6,7 +6,7 @@ class MyDocument extends NextDocument {
   }
   render() {
     return (
-      <Html data-theme="garden">
+      <Html data-theme="garden" className="bg-white">
         <Head>
           <link rel="icon" href="/favicon.ico" />
         </Head>
