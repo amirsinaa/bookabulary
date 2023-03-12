@@ -1,3 +1,5 @@
+import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
+import { VocabularyCard } from "@/components/vocabulary/views/vocabulary-card";
 import {
   createServerSupabaseClient,
   User
@@ -9,17 +11,19 @@ import {
 import {
   LoadingContentSkeleton
 } from "@/components/common/loading-content-skeleton";
-import { VocabularyCard } from "@/components/vocabulary/views/vocabulary-card";
+import type {
+  GetServerSidePropsContext,
+  GetServerSideProps,
+  NextPage,
+} from "next";
 import { QueryClient, useQuery, dehydrate } from "@tanstack/react-query";
-import type { GetServerSideProps, NextPage, GetServerSidePropsContext, } from "next";
+import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
 import { GET_BOOK } from "@/components/book/api/GET_BOOK";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/common/button";
-import REACT_QUERY_DEFAULT_OPTIONS from "@/constant/react-query-options";
 import { Book } from "@/components/book/views/book";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import ReactQueryUiErrorHandler from "@/components/common/react-query-ui-error";
 
 const queryClient = new QueryClient(REACT_QUERY_DEFAULT_OPTIONS);
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
@@ -60,11 +64,11 @@ const BooksPage: NextPage = ({ user }: { user: User }) => {
           {(vocabularies.data).length === 0 ? <div
             className="flex flex-col items-center m-auto f-full">
             <h5
-              className="pb-10 text-4xl font-bold text-center text-teal-800"
+              className="pb-10 text-4xl font-bold text-center text-teal-800 dark:text-white"
             >
               No vocabulary yet!
             </h5>
-            <Button
+            {(vocabularies.data.length === 0 && isOwner) && <Button
               classOverrides='btn'
             >
               <Link
@@ -72,7 +76,7 @@ const BooksPage: NextPage = ({ user }: { user: User }) => {
               >
                 Create one
               </Link>
-            </Button>
+            </Button>}
           </div> : vocabularies?.data?.map(vocabulary => {
             return <VocabularyCard key={vocabulary.id} data={vocabulary} />
           })}
