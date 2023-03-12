@@ -1,11 +1,10 @@
-import { ChevronUpIcon, MobileIcon, LockClosedIcon } from '@radix-ui/react-icons';
-
 const Features = ({ data }) => {
   return (
     <div className="relative grid gap-8 p-7 lg:grid-cols-2">
       {data.map(feature => {
         return (
           <div
+            key={feature.id}
             className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-lime-500 focus-visible:ring-opacity-50"
           >
             <div

@@ -5,7 +5,7 @@ const Faq = ({ data }) => {
   return (
     data.map(item => {
       return (
-        <Disclosure>
+        <Disclosure key={item.id}>
           {({ open }) => (
             <>
               <Disclosure.Button className="flex w-full justify-between rounded-lg bg-lime-100 px-4 py-4 my-2 text-left text-lg font-medium text-lime-900 hover:bg-lime-200 focus:outline-none focus-visible:ring focus-visible:ring-lime-500 focus-visible:ring-opacity-75">

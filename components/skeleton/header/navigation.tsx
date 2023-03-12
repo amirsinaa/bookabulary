@@ -14,7 +14,7 @@ export default function Navigation() {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
           </label>
           <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-white dark:bg-gray-800 rounded-box w-52 text-md">
-            {mainMenuItems.map(item => <li>
+            {mainMenuItems.map(item => <li key={item.id}>
               <Link className='btn-link no-underline hover:no-underline' href={item.link}>
                 {item.title}
               </Link>
@@ -25,7 +25,7 @@ export default function Navigation() {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 text-xl">
-          {mainMenuItems.map(item => <li>
+          {mainMenuItems.map(item => <li key={item.id}>
             <Link className='btn-link no-underline hover:no-underline' href={item.link}>
               {item.title}
             </Link>
@@ -41,7 +41,7 @@ export default function Navigation() {
               </div>
             </label>
             <ul tabIndex={0} className="mt-3 p-2 shadow-lg menu menu-compact dropdown-content bg-white dark:bg-gray-800 rounded-box w-52">
-              {profileMenuItems.map(item => <li className='border-b-2 dark:border-gray-600'>
+              {profileMenuItems.map(item => <li key={item.id} className='border-b-2 dark:border-gray-600'>
                 <Link href={item.link}>
                   {item.title}
                 </Link>
