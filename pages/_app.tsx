@@ -4,7 +4,7 @@ import {
   QueryClient,
   Hydrate,
 } from '@tanstack/react-query';
-import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ColorModeProvider } from '@/context/color-mode.context'
@@ -15,7 +15,7 @@ import { useState } from 'react'
 import '@/styles/globals.css';
 
 const Bookabulary = ({ Component, pageProps }: ExtendedAppProps<PageProps>) => {
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient())
+  const [supabaseClient] = useState(() => createPagesBrowserClient())
   const [queryClient] = useState(() => new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
