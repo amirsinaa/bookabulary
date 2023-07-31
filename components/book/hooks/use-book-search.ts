@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import useDebounce from "@/hooks/use-debounce";
 
 export const useBookSearch = ({ bookName }) => {
-  const debounce = useDebounce<string>(bookName, 500);
+  const debounce = useDebounce<string>(bookName, 1100);
 
   return useQuery(
     ["book-finder-result", debounce],
