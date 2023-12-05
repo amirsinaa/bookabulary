@@ -1,4 +1,5 @@
 import NextDocument, { Html, Head, Main, NextScript } from "next/document";
+import { Analytics } from '@vercel/analytics/react';
 
 class MyDocument extends NextDocument {
   static async getInitialProps(ctx) {
@@ -13,6 +14,7 @@ class MyDocument extends NextDocument {
         <body>
           <Main />
           <div id="portal" />
+          <Analytics />
           <NextScript />
         </body>
       </Html>
