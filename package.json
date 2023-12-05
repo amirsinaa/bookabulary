@@ -6,7 +6,7 @@
 		"type": "git",
 		"url": "https://github.com/amirsinaa/bookabulary"
 	},
-	"version": "0.3.10",
+	"version": "0.3.13",
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
