@@ -1,4 +1,5 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from 'tailwindcss'
+
 module.exports = {
 	darkMode: 'class',
 	daisyui: {
@@ -26,4 +27,4 @@ module.exports = {
 		extend: {},
 	},
 	plugins: [require('daisyui')],
-}
+} satisfies Config
